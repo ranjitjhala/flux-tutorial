@@ -1,2 +1,2 @@
-pdf: main.pdf
-	cd typ && typst compile main.typ ../main.pdf
+main.pdf:
+	typst compile typ/main.typ main.pdf --root .

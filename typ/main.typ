@@ -8,7 +8,7 @@
     "Ranjit Jhala",
   ),
   license: "MIT",
-  description: "How to use Refinement Types with Rust",
+  description: "Programming with Refinement Types with Rust",
   repository: "https://github.com/jneug/typst-mantys",
 
   /// Uncomment one of the following lines to load the above
@@ -22,7 +22,7 @@
   // theme: my-theme,
   theme: orly-modified,
   theme-options: (
-    title-image: image("../figures/flux.png", height: auto),
+    title-image: image("figs/flux.png", height: auto),
   ),
   title: "Verify Rust with Flux",
   subtitle: "Refinement Types for Rust",
@@ -61,7 +61,10 @@
 
 = Introduction
 
+Fixing a hole where the rain gets in.
+
 #lorem(30)
+
 
 ```rust
 fn incr(x: i32) -> i32 {
