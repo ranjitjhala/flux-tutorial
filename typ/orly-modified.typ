@@ -158,7 +158,7 @@
         block({
           set std.text(fill: secondary)
           if it.numbering != none {
-            counter(std.heading).display()
+            counter(std.heading).display("1.1")
             h(1.8em)
           }
           it.body

@@ -13,7 +13,7 @@
 
   /// Uncomment one of the following lines to load the above
   /// package information directly from the typst.toml file
-  // ..toml("../typst.toml"),
+  // ..toml("../typst.toml")e
   // ..toml("typst.toml"),
 
   // theme: include("orly-modified.typ"),
@@ -40,6 +40,9 @@
   // theme: themes.modern
 )
 
+// Set global heading numbering to use arabic numbers
+#set heading(numbering: "1.1")
+
 // Make the document title (inside the document, not on cover) italic
 #show heading: it => {
   // Target headings that are likely the document title (unnumbered, early in doc)
@@ -58,6 +61,19 @@
   v(0.5em)
 }
 
+#show std.link: it => text(fill: blue, underline(it))
+
+
+// #let code-block(lang: none, classes: (), content) = {
+//   // Custom styling based on classes
+//   raw(lang: lang, #content)
+// }
+
+// #code-block(lang: "python", classes: ("highlight", "numbered"))[
+// def hello():
+//     print("Hello, world!")
+// ]
+
 
 = Introduction
 
@@ -66,12 +82,13 @@ Fixing a hole where the rain gets in.
 #lorem(30)
 
 
-```rust
+```rust-editable
 fn incr(x: i32) -> i32 {
-  x + 1
+  x + 2
 }
 ```
 
+#include("01-refinements.typ")
 
 = Basics
 
