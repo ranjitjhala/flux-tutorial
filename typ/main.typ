@@ -1,5 +1,7 @@
 #import "@preview/mantys:1.0.2": *
 #import "orly-modified.typ" as orly-modified
+#import "@preview/codly:1.3.0": *
+#import "@preview/codly-languages:0.1.1": *
 
 #show: mantys(
   name: "flux-book",
@@ -15,15 +17,12 @@
   /// package information directly from the typst.toml file
   // ..toml("../typst.toml")e
   // ..toml("typst.toml"),
-
-  // theme: include("orly-modified.typ"),
-  // When orly-modified.typ exists, use one of these approaches:
-  // #import "orly-modified.typ": my-theme
-  // theme: my-theme,
+  
   theme: orly-modified,
   theme-options: (
     title-image: image("figs/flux.png", height: auto),
   ),
+  wrap-snippets: true,
   title: "Verify Rust with Flux",
   subtitle: "Refinement Types for Rust",
   date: datetime.today(),
@@ -31,49 +30,25 @@
   abstract: [
     #lorem(50)
   ],
-
-  // examples-scope: (
-  //   scope: (:),
-  //   imports: (:)
-  // )
-
-  // theme: themes.modern
 )
 
 // Set global heading numbering to use arabic numbers
 #set heading(numbering: "1.1")
 
-// Make the document title (inside the document, not on cover) italic
-#show heading: it => {
-  // Target headings that are likely the document title (unnumbered, early in doc)
-  if it.body == "Verify Rust with Flux"  {
-    set text(style: "italic")
-    it
-  } else {
-    it
-  }
+// Render rust-editable blocks also as rust
+#show raw.where(lang: "rust-editable"): it => {
+  set text(size: 1.2em)
+  raw(it.text, lang: "rust", block: it.block)
 }
 
 // Add 1em vertical space after level 1 headings (chapters)
 #show heading.where(level: 1): it => {
-  set text(font: "Times New Roman", size: 1em, weight: "bold")
+  set text(font: "Liberation Serif", size: 1em, weight: "bold")
   it
   v(0.5em)
 }
 
 #show std.link: it => text(fill: blue, underline(it))
-
-
-// #let code-block(lang: none, classes: (), content) = {
-//   // Custom styling based on classes
-//   raw(lang: lang, #content)
-// }
-
-// #code-block(lang: "python", classes: ("highlight", "numbered"))[
-// def hello():
-//     print("Hello, world!")
-// ]
-
 
 = Introduction
 
@@ -81,6 +56,17 @@ Fixing a hole where the rain gets in.
 
 #lorem(30)
 
+*Editable Rust*
+
+
+```rust-editable
+fn stinker_pinker(x: i32) -> i32 {
+  x + 1
+}
+```
+
+
+*Plain Rust*
 
 ```rust-editable
 fn incr(x: i32) -> i32 {
@@ -89,6 +75,7 @@ fn incr(x: i32) -> i32 {
 ```
 
 #include("01-refinements.typ")
+
 
 = Basics
 
