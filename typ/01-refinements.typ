@@ -41,7 +41,7 @@ _indexed_ by a logical value. For example
 First off, we need to add some incantations that pull in the mechanisms
 for writing flux specifications as Rust _attributes_.
 
-```rust,editable
+```rust-editable
 #![allow(unused)]
 extern crate flux_rs;
 use flux_rs::attrs::*;
@@ -54,7 +54,7 @@ We can already start using these indexed types to start writing (and checking)
 code. For example, we can write the following specification which says that
 the value _returned_ by `mk_ten` must in fact be `10`
 
-```rust,editable
+```rust-editable
 #[spec(fn() -> i32[10])]
 pub fn mk_ten() -> i32 {
     5 + 4
