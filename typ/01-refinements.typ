@@ -1,3 +1,5 @@
+#import "orly-modified.typ": alert
+
 = Refining Types
 
 
@@ -50,12 +52,24 @@ extern crate flux_rs;
 use flux_rs::attrs::*;
 ```
 
+#alert("info", [
+  *Note:* Make sure you have the latest version of Flux installed before proceeding with these examples.
+])
+
+
+#alert("warning", [
+  *Note:* Make sure you have the latest version of Flux installed before proceeding with these examples.
+])
+
+#alert("error", [
+  *Note:* Make sure you have the latest version of Flux installed before proceeding with these examples.
+])
 
 === Post-Conditions
 
-We can already start using these indexed types to start writing (and checking)
-code. For example, we can write the following specification which says that
-the value _returned_ by `mk_ten` must, in fact, be `10`
+We can now use these indexed types to start writing (and checking)
+code. For example, we can write the following specification which
+says that the value _returned_ by `mk_ten` must, in fact, be `10`
 
 ```flux
 #[spec(fn() -> i32[10])]

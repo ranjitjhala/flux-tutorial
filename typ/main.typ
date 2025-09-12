@@ -10,7 +10,7 @@
     "Ranjit Jhala",
   ),
   license: "MIT",
-  description: "Programming with Refinement Types with Rust",
+  description: "Programming Rust with Refinement Types",
   repository: "https://github.com/jneug/typst-mantys",
 
   /// Uncomment one of the following lines to load the above
@@ -24,7 +24,7 @@
   ),
   wrap-snippets: true,
   title: "Verify Rust with Flux",
-  subtitle: "Refinement Types for Rust",
+  subtitle: "Programming Rust with Refinement Types",
   date: datetime.today(),
   url: "https://flux-rs.github.io",
   abstract: [
