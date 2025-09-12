@@ -17,7 +17,7 @@
   /// package information directly from the typst.toml file
   // ..toml("../typst.toml")e
   // ..toml("typst.toml"),
-  
+
   theme: orly-modified,
   theme-options: (
     title-image: image("figs/flux.png", height: auto),
@@ -35,8 +35,8 @@
 // Set global heading numbering to use arabic numbers
 #set heading(numbering: "1.1")
 
-// Render rust-editable blocks also as rust
-#show raw.where(lang: "rust-editable"): it => {
+// Render flux blocks also as rust
+#show raw.where(lang: "flux"): it => {
   set text(size: 1.2em)
   raw(it.text, lang: "rust", block: it.block)
 }
@@ -59,7 +59,7 @@ Fixing a hole where the rain gets in.
 *Editable Rust*
 
 
-```rust-editable
+```flux
 fn stinker_pinker(x: i32) -> i32 {
   x + 1
 }
@@ -68,7 +68,7 @@ fn stinker_pinker(x: i32) -> i32 {
 
 *Plain Rust*
 
-```rust-editable
+```flux
 fn incr(x: i32) -> i32 {
   x + 2
 }

@@ -1,21 +1,24 @@
 = Refining Types
 
-Types bring order to code. For example, if a variable `i:usize`
-then we know `i` is a number that can be used to index a vector.
-Similarly, if `v: Vec<&str>` then we can be sure that `v` is a
-collection of strings which may _be_ indexed but of course,
-not used _as_ an index. However, by itself `usize` doesn't
-tell us how big or small the number and hence the programmer
-must still rely on their own wits, a lot of tests, and a dash
-of optimism, to ensure that all the different bits fit properly
-at run-time.
 
-#link("https://arxiv.org/abs/2010.07763")[Refinements] are a promising new way to extend
-type checkers with logical constraints that specify additional
-correctness requirements that can be verified by the compiler,
-thereby entirely eliminating various classes of run-time problems.
+Types bring order to code. For example, if a variable `i` has
+type `usize` then we know that `i` is a number that can be used
+to index a vector. Similarly, if `names` has type `Vec<&str>`
+then we can be certain that `names` is a collection of strings
+which may _be_ indexed but of course, not used _as_ an index.
+//
+However, by itself, `usize` does not tell us how _big_ or _small_
+the number is. The programmer must still rely on their own wits,
+lots of tests, and a dash of optimism, to ensure that all the
+different bits fit properly at run-time.
 
-To begin, lets see how flux lets you refine basic or primitive
+#link("https://arxiv.org/abs/2010.07763")[Refinements] are a
+promising new way to extend type checkers with _logical_
+constraints that specify additional correctness requirements
+that can be verified at compile-time, thereby entirely
+eliminating various classes of run-time problems.
+//
+Lets see how flux lets you refine basic or primitive
 types like `i32` or `usize` or `bool` with logical constraints that
 can be checked at compile time.
 
@@ -41,7 +44,7 @@ _indexed_ by a logical value. For example
 First off, we need to add some incantations that pull in the mechanisms
 for writing flux specifications as Rust _attributes_.
 
-```rust-editable
+```flux
 #![allow(unused)]
 extern crate flux_rs;
 use flux_rs::attrs::*;
@@ -52,68 +55,71 @@ use flux_rs::attrs::*;
 
 We can already start using these indexed types to start writing (and checking)
 code. For example, we can write the following specification which says that
-the value _returned_ by `mk_ten` must in fact be `10`
+the value _returned_ by `mk_ten` must, in fact, be `10`
 
-```rust-editable
+```flux
 #[spec(fn() -> i32[10])]
 pub fn mk_ten() -> i32 {
     5 + 4
 }
 ```
 
+// HEREHEREHEREHERE
+
 #strong[Push Play]
 Push the "run" button in the pane above. You will see a red squiggle that
-and when you hover over the squiggle you will see an error message
+and when you hover over the squiggle you will see an error message.
 
-```bash
-error[...]: refinement type error
+```
+error[0999]: refinement type error
   |
 7 |     5 + 4
   |     ^^^^^ a postcondition cannot be proved
 ```
 
-which says that that the _postcondition might not hold_ which means
-that the _output_ produced by `mk_ten` may not in fact be an `i32[10]`
-as indeed, in this case, the result is `9`! You can eliminate the error
-by _editing_ the body to `5 + 4 + 1` or `5 + 5` or just `10`.
+The `postcondition cannot be proved` means that the output
+returned by `mk_ten` cannot be proved to be an `i32[10]`
+as indeed, in this case, the result is `9`!
+//
+You can eliminate the error by editing the body
+to `5 + 4 + 1` or `5 + 5` or just `10`.
 
 // <!-- SLIDE -->
 
-// ### Pre-Conditions
+=== Pre-Conditions
 
-// You can use an index to _restrict the inputs_ that a function expects
-// to be called with.
+You can use an index to restrict the _inputs_ that a function expects.
 
-// ```rust,editable
-// #[spec(fn (b:bool[true]))]
-// pub fn assert(b:bool) {
-//   if !b { panic!("assertion failed") }
-// }
-// ```
+```flux
+#[spec(fn (b:bool[true]))]
+pub fn assert(b:bool) {
+  if !b { panic!("assertion failed") }
+}
+```
 
-// The specification for `assert` says you can _only_ call
-// it with `true` as the input. So if you write
+The specification for `assert` says you can _only_ call
+it with `true` as the input. So if you write
 
-// ```rust,editable
-// fn test(){
-//   assert(2 + 2 == 4);
-//   assert(2 + 2 == 5); // fails to type check
-// }
-// ```
+```flux
+fn test(){
+  assert(2 + 2 == 4);
+  assert(2 + 2 == 5); // fails to type check
+}
+```
 
-// then `flux` will complain that
+then `flux` will complain that
 
-// ```bash
-// error[FLUX]: precondition might not hold
-//    |
-// 12 |     assert(2 + 2 == 5); // fails to type check
-//    |     ^^^^^^^^^^^^^^^^^^
-// ```
+```
+error[FLUX]: precondition might not hold
+   |
+12 |     assert(2 + 2 == 5); // fails to type check
+   |     ^^^^^^^^^^^^^^^^^^
+```
 
-// meaning at the second call to `assert` the input _may not_
-// be `true`, as of course, in this case, it is not!
+meaning at the second call to `assert` the input _may not_
+be `true`, as of course, in this case, it is not!
 
-// Can you edit the code of `test` to fix the error?
+Can you edit the code of `test` to fix the error?
 
 // <!-- SLIDE -->
 
