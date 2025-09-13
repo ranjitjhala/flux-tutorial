@@ -42,11 +42,19 @@
 }
 
 // Add 1em vertical space after level 1 headings (chapters)
-#show heading.where(level: 1): it => {
+#show heading.where(level: 1 ): it => {
   set text(font: "Liberation Serif", size: 1em, weight: "bold")
   it
   v(0.5em)
 }
+
+// Add 1em vertical space after level 1 headings (chapters)
+// #show heading.where(level: 3): it => {
+//   set text(font: "Liberation Serif", size: 1em, weight: "bold")
+//   it
+//   // v(0.1em)
+// }
+
 
 #show std.link: it => text(fill: blue, underline(it))
 
@@ -55,6 +63,10 @@
 Fixing a hole where the rain gets in.
 
 #lorem(30)
+
+#include("01-refinements.typ")
+
+= Random Junk
 
 *Editable Rust*
 
@@ -74,17 +86,19 @@ fn incr(x: i32) -> i32 {
 }
 ```
 
-#include("01-refinements.typ")
+#alert("info", [
+  *Note:* Make sure you have the latest version of Flux installed before proceeding with these examples.
+])
 
 
-= Basics
+#alert("warning", [
+  *Note:* Make sure you have the latest version of Flux installed before proceeding with these examples.
+])
 
-#lorem(30)
+#alert("error", [
+  *Note:* Make sure you have the latest version of Flux installed before proceeding with these examples.
+])
 
-= References
-
-#lorem(30)
-
-= Structs
-
-#lorem(30)
+#alert("success", [
+  *Note:* Make sure you have the latest version of Flux installed before proceeding with these examples.
+])

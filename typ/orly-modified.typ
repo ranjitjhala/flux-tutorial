@@ -157,7 +157,7 @@
       } else {
         block({
           set std.text(fill: secondary)
-          if it.numbering != none {
+          if it.numbering != none and level <= 2 {
             counter(std.heading).display("1.1")
             h(1.8em)
           }
@@ -255,7 +255,7 @@
       outline(
         title: none,
         indent: 1em,
-        depth: 3,
+        depth: 2,
         // fill: repeat("."),
       ),
     )

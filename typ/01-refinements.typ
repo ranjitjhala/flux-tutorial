@@ -9,10 +9,12 @@ to index a vector. Similarly, if `names` has type `Vec<&str>`
 then we can be certain that `names` is a collection of strings
 which may _be_ indexed but of course, not used _as_ an index.
 //
-However, by itself, `usize` does not tell us how _big_ or _small_
-the number is. The programmer must still rely on their own wits,
-lots of tests, and a dash of optimism, to ensure that all the
-different bits fit properly at run-time.
+However, by itself, `usize` does not tell us how _big_ the number is,
+or whether it may safely be used to index into `names`.
+//
+The programmer must still rely on their own wits, lots of tests, and
+a dash of optimism, to ensure that all the different bits fit properly
+at run-time.
 
 #link("https://arxiv.org/abs/2010.07763")[Refinements] are a
 promising new way to extend type checkers with _logical_
@@ -52,18 +54,6 @@ extern crate flux_rs;
 use flux_rs::attrs::*;
 ```
 
-#alert("info", [
-  *Note:* Make sure you have the latest version of Flux installed before proceeding with these examples.
-])
-
-
-#alert("warning", [
-  *Note:* Make sure you have the latest version of Flux installed before proceeding with these examples.
-])
-
-#alert("error", [
-  *Note:* Make sure you have the latest version of Flux installed before proceeding with these examples.
-])
 
 === Post-Conditions
 
@@ -78,22 +68,26 @@ pub fn mk_ten() -> i32 {
 }
 ```
 
-// HEREHEREHEREHERE
-
-#strong[Push Play]
-Push the "run" button in the pane above. You will see a red squiggle that
-and when you hover over the squiggle you will see an error message.
+When you run `flux` on this code, for example, by pushing the
+"run" button in the pane above in the online demo, or hitting
+save in your editor, `flux` will produce a little red squiggle
+under the `5 + 4`, with the error message
 
 ```
-error[0999]: refinement type error
+error[E0999]: refinement type error
   |
-7 |     5 + 4
+6 |     5 + 4
   |     ^^^^^ a postcondition cannot be proved
+  |
+note: this is the condition that cannot be proved
+  |
+4 | #[spec(fn() -> i32[10])]
+  |                    ^^
 ```
 
-The `postcondition cannot be proved` means that the output
-returned by `mk_ten` cannot be proved to be an `i32[10]`
-as indeed, in this case, the result is `9`!
+The error message says that `flux` cannot prove that
+the output expression `5 + 4` has the type `i32[10]`,
+as indeed, in this case, the output result equals `9`!
 //
 You can eliminate the error by editing the body
 to `5 + 4 + 1` or `5 + 5` or just `10`.
@@ -111,11 +105,10 @@ pub fn assert(b:bool) {
 }
 ```
 
-The specification for `assert` says you can _only_ call
-it with `true` as the input. So if you write
+The specification for `assert` says you can only call it with the input `true`. So if you write
 
 ```flux
-fn test(){
+fn test_assert(){
   assert(2 + 2 == 4);
   assert(2 + 2 == 5); // fails to type check
 }
@@ -124,181 +117,181 @@ fn test(){
 then `flux` will complain that
 
 ```
-error[FLUX]: precondition might not hold
+error[E0999]: refinement type error
    |
-12 |     assert(2 + 2 == 5); // fails to type check
-   |     ^^^^^^^^^^^^^^^^^^
+10 |   assert(2 + 2 == 5); // fails to type check
+   |   ^^^^^^^^^^^^^^^^^^ a precondition cannot be proved
+   |
+note: this is the condition that cannot be proved
+   |
+ 3 | #[spec(fn (b:bool[true]))]
+   |                   ^^^^
 ```
 
 meaning at the second call to `assert` the input _may not_
-be `true`, as of course, in this case, it is not!
-
+be `true`, as of course, in this case, it is `false`!
 Can you edit the code of `test` to fix the error?
 
 // <!-- SLIDE -->
 
-// ## Index Parameters and Expressions
+== Index Parameters
 
-// Its not terribly exciting to only talk about _fixed_ values
-// like `10` or `true`. To be more useful, `flux` lets you index
-// types by refinement _parameters_. For example, you can write
+Its not terribly exciting to only talk about _fixed_ values
+like `10` or `true`. To be more useful, `flux` lets you index
+types by refinement _parameters_.
 
-// ```rust,editable
-// #[spec(fn(n:i32) -> bool[0 < n])]
-// pub fn is_pos(n: i32) -> bool {
-//   if 0 < n {
-//     true
-//   } else {
-//     false
-//   }
-// }
-// ```
+```flux
+#[spec(fn(n:i32) -> bool[0 < n])]
+pub fn is_pos(n: i32) -> bool {
+  if 0 < n { true } else { false }
+}
+```
 
-// Here, the type says that `is_pos`
+For example, you can write a function `is_pos` whose type says that it
 
-// - **takes** as _input_ some `i32` _indexed by_ `n`
-// - **returns** as _output_ the `bool` _indexed by_ `0 < n`
+- *takes* as _input_ some `i32` _indexed by_ `n`
+- *returns* as _output_ the `bool` _indexed by_ `0 < n`
 
-// That is, `is_pos` returns `true` _exactly when_ `0 < n`.
+That is, `is_pos` returns `true` _exactly when_ `0 < n`.
 
-// We might use this function to check that:
+We might use this function to check that:
 
-// ```rust,editable
-// pub fn test_pos(n: i32) {
-//   let m = if is_pos(n) { n - 1 } else { 0 };
-//   assert(0 <= m);
-// }
-// ```
+```flux
+pub fn test_pos(n: i32) {
+  let m = if is_pos(n) { n - 1 } else { 0 };
+  assert(0 <= m);
+}
+```
 
 // <!-- SLIDE -->
 
-// ## Existential Types
+== Existential Types
 
-// Often we don't care about the _exact_ value of a thing -- but just
-// care about some _properties_ that it may have. For example, we don't
-// care that an `i32` is equal to `5` or `10` or `n` but that it is
-// non-negative.
+Often we don't care about the _exact_ value of a thing, but just
+care about some _properties_ that it may have. For example, we might
+not care that an `i32` is equal to `5` or `10` or `n` but that it is
+non-negative or less than `n`.
+//
+// #align(center)[
+// #table(
+//   columns: 2,
+//   align: (left, left),
+//   [*Type*], [*Meaning*],
+//   [`i32{v: 0 < v}`], [The set of `i32` values that are positive],
+//   [`i32{v: n <= v}`], [The set of `i32` values greater than or equal to `n`],
+// )
+// ]
+//
+Flux allows such specifications by pairing plain Rust types
+with _assertions_ that constrain the value#footnote[These are not arbitrary Rust expressions but a subset of expressions from logics that can be efficiently decided by SMT Solvers.]. For example, the type
 
-// | **Type**         | **Meaning**                                          |
-// | :--------------- | :--------------------------------------------------- |
-// | `i32{v: 0 <  v}` | The set of `i32` values that positive                |
-// | `i32{v: n <= v}` | The set of `i32` values greater than or equal to `n` |
+- `i32{v: 0 < v}` denotes the set of `i32` values that are positive,
+- `i32{v: n <= v}` denotes the set of `i32` values greater than or equal to `n`.
 
-// Flux allows such specifications by pairing plain Rust types
-// with _assertions_ [^1] that constrain the value.
-
-// <!-- SLIDE -->
-
-// ## Existential Output Types
-
-// For example, we can rewrite `mk_10` with the output type
-// `i32{v:0<v}` that specifies a weaker property:
-// the value returned by `mk_ten_pos` is positive.
-
-// ```rust,editable
-// #[spec(fn() -> i32{v: 0 < v})]
-// pub fn mk_ten_pos() -> i32 {
-//     5 + 5
-// }
-// ```
 
 // <!-- SLIDE -->
 
-// ## Example: `abs`olute value
+=== Existential Output Types
 
-// Similarly, you might specify that a function that computes the _absolute_
-// value of an `i32` with a type which says the result is non-negative _and_
-// exceeds the input `n`.
+We can rewrite `mk_10` with the output type `i32{v:0 < v}` that
+specifies a weaker property, that the value returned by `mk_ten_pos`
+is positive (not necessarily equal to `10`).
 
-// ```rust,editable
-// #[spec(fn (n:i32) -> i32{v:0<=v && n<=v})]
-// pub fn abs(n: i32) -> i32 {
-//     if 0 <= n {
-//         n
-//     } else {
-//         0 - n
-//     }
-// }
-// ```
+```flux
+#[spec(fn() -> i32{v: 0 < v})]
+pub fn mk_ten_pos() -> i32 {
+    5 + 5
+}
+```
 
 // <!-- SLIDE -->
 
-// ## Combining Indexes and Constraints
+=== An `abs`olute value function
 
-// Sometimes, we want to _combine_ indexes and constraints in a specification.
+Lets write a function that computes the _absolute_
+value of an `i32` and give it a refined type which
+says the result is non-negative _and_ exceeds the input `n`.
 
-// For example, suppose we have some code that manipulates
-// _scores_ which are required to be between `0` and `100`.
-// Now, suppose we want to write a function that adds `k`
-// points to a score `s`. We want to specify that
-
-// - The _inputs_ `s` and `k` must be non-negative,
-// - the _inputs_ `s + k <= 100`, and
-// - The _output_ equals `s + k`
-
-// ```rust,editable
-// #[spec(fn ({usize[@s] | s + k <= 100}, k:usize) -> usize[s + k])]
-// fn add_points(s: usize, k: usize) -> usize {
-//     s + k
-// }
-
-// fn test_add_points() {
-//     assert(add_points(20, 30) == 50);
-//     assert(add_points(90, 30) == 120); // fails to type check
-// }
-// ```
-
-// Note that we use the `@s` to _index_ the value of the `s` parameter,
-// so that we can
-
-// 1. _constrain_ the inputs to `s + k <= 100`, and
-// 2. _refine_ the value of the output to be exactly `usize[s + k]`.
-
-// **EXERCISE** Why does flux reject the second call to `add_points`?
+```flux
+#[spec(fn (n:i32) -> i32{v: 0<= v && n <= v})]
+pub fn abs(n: i32) -> i32 {
+    if 0 <= n { n } else { 0 - n }
+}
+```
 
 // <!-- SLIDE -->
 
-// ## Example: `factorial`
+== Combining Indexes and Constraints
 
-// As a last example, you might write a function to compute the factorial of `n`
+Sometimes, we want to _combine_ indexes and constraints in a specification.
+For example, suppose we have some code that manipulates
+_scores_ which are required to be between `0` and `100`.
+Now, suppose we want to write a function that adds `k`
+points to a score `s`. We want to specify that
 
-// ```rust,editable
-// #[spec(fn (n:i32) -> i32{v:1<=v && n<=v})]
-// pub fn factorial(n: i32) -> i32 {
-//     let mut i = 0;
-//     let mut res = 1;
-//     while i < n {
-//         i += 1;
-//         res = res * i;
-//     }
-//     res
-// }
-// ```
+- The _inputs_ `s` and `k` must be non-negative,
+- the _inputs_ `s + k <= 100`, and
+- The _output_ equals `s + k`.
 
-// Here the specification says the input must be non-negative, and the
-// output is at least as large as the input. Note, that unlike the previous
-// examples, here we're actually _changing_ the values of `i` and `res`.
+```flux
+#[spec(fn (s:usize{s + k <= 100}, k:usize) -> usize[s + k])]
+fn add_points(s: usize, k: usize) -> usize {
+    s + k
+}
+fn test_add_points() {
+    assert(add_points(20, 30) == 50);
+    assert(add_points(90, 30) == 120); // fails to type check
+}
+```
+
+Note that we
+
+1. _constrain_ the inputs to `s + k <= 100`, and
+2. _refine_ the value of the output to be exactly `usize[s + k]`.
+
+*Exercise* Why does flux reject the second call to `add_points`?
 
 // <!-- SLIDE -->
 
-// ## Summary
+=== Example: `factorial`
 
-// In this post, we saw how Flux lets you
+As a last example, lets write a function to compute the factorial of `n`
 
-// 1. _decorate_ basic Rust types like `i32` and `bool` with
-//    **indices** and **constraints** that let you respectively
-//    _refine_ the sets of values that inhabit that type, and
+```flux
+#[spec(fn (n:i32) -> i32{v:1<=v && n<=v})]
+pub fn factorial(n: i32) -> i32 {
+    let mut i = 0;
+    let mut res = 1;
+    while i < n {
+        i += 1;
+        res = res * i;
+    }
+    res
+}
+```
 
-// 2. _specify_ contracts on functions that state **pre-conditions** on
-//    the sets of legal inputs that they accept, and **post-conditions**
-//    that describe the outputs that they produce.
+The specification says the input must be non-negative, and the
+output is at least as large as the input. Unlike the previous
+examples, here we're actually _changing_ the values of `i` and `res`.
 
-// The whole point of Rust, of course, is to allow for efficient _imperative_
-// sharing and updates, without sacrificing thread- or memory-safety. Next time,
-// we'll see how Flux melds refinements and Rust's ownership to make refinements
-// happily coexist with imperative code.
+// <!-- SLIDE -->
+
+== Summary
+
+In this chapter, we saw how Flux lets you
+
+1. *refine* basic Rust types like `i32` and `bool` with
+    _indices_ and _constraints_ that let you respectively
+    define the sets of values that inhabit that type, and
+
+2. *specify contracts* on functions that state _pre-conditions_ on
+   the sets of legal inputs that they accept, and _post-conditions_
+   that describe the outputs that they produce.
+
+The whole point of Rust, of course, is to allow for efficient _imperative_
+sharing and updates, without sacrificing thread- or memory-safety.
+//
+In the next chapter, we will see how Flux melds refinements and Rust's ownership to make refinements get along with imperative code.
 
 // [flux-grammar]: https://github.com/flux-rs/flux/blob/main/book/src/guide/specs.md#grammar-of-refinements
 // [flux-github]: https://github.com/liquid-rust/flux/
-
-// [^1]: These are not arbitrary Rust expressions but a subset of expressions from logics that can be efficiently decided by [SMT Solvers][flux-grammar]
