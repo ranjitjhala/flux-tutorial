@@ -248,16 +248,14 @@
       strong(link(it.element.location(), it.inner()))
     }
 
-    v(1fr)
-    std.heading(depth: 2, outlined: false, bookmarked: false, numbering: none, "Table of Contents")
-    columns(
-      2,
-      outline(
-        title: none,
-        indent: 1em,
-        depth: 2,
-        // fill: repeat("."),
-      ),
+    // v(1fr)
+    // std.heading(depth: 2, outlined: false, bookmarked: false, numbering: none, "Table of Contents")
+    // v(1em)
+    outline(
+      title: "Table of Contents", // none,
+      indent: 1em,
+      depth: 2,
+      // fill: repeat("."),
     )
   }
 

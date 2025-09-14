@@ -221,7 +221,7 @@ pub fn abs(n: i32) -> i32 {
 
 // <!-- SLIDE -->
 
-== Combining Indexes and Constraints
+== Combining Indexes & Constraints
 
 Sometimes, we want to _combine_ indexes and constraints in a specification.
 For example, suppose we have some code that manipulates
