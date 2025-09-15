@@ -2,7 +2,6 @@
 
 = Refining Types
 
-
 Types bring order to code. For example, if a variable `i` has
 type `usize` then we know that `i` is a number that can be used
 to index a vector. Similarly, if `names` has type `Vec<&str>`

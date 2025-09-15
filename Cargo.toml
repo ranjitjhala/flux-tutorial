@@ -1,0 +1,22 @@
+[package]
+name = "flux-tutorial"
+version = "0.1.0"
+edition = "2024"
+
+[profile.dev]
+incremental = true
+
+[package.metadata.flux]
+enabled = true
+
+[dependencies]
+# flux-rs = { git = "https://github.com/flux-rs/flux" }
+# flux-core = { git = "https://github.com/flux-rs/flux" }
+# flux-alloc = { git = "https://github.com/flux-rs/flux" }
+flux-rs = { path = "/Users/rjhala/research/flux/lib/flux-rs" }
+flux-core = { path = "/Users/rjhala/research/flux/lib/flux-core" }
+flux-alloc = { path = "/Users/rjhala/research/flux/lib/flux-alloc" }
+rand = "0.8"
+
+[lints.rust]
+unexpected_cfgs = {level="warn", check-cfg=['cfg(flux)']}
