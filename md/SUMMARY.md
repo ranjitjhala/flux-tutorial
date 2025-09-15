@@ -7,7 +7,7 @@
 
 # Interactive Tutorial
 
-- [Refinements](tutorial/01-refinements.md)
+- [Refinements](tutorial/ch01_refinements.md)
 - [Ownership]()
 - [Structs]()
 - [Enums]()
