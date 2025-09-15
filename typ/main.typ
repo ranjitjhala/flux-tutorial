@@ -15,7 +15,7 @@
 
   /// Uncomment one of the following lines to load the above
   /// package information directly from the typst.toml file
-  // ..toml("../typst.toml")e
+  // ..toml("../typst.toml")
   // ..toml("typst.toml"),
 
   theme: orly-modified,
@@ -65,6 +65,7 @@ Fixing a hole where the rain gets in.
 #lorem(30)
 
 #include("ch01_refinements.typ")
+#include("ch02_ownership.typ")
 
 = Random Junk
 

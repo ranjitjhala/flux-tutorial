@@ -1,6 +1,6 @@
 #import "orly-modified.typ": alert
 
-= Refining Types
+= Refining Types <01-refinements>
 
 Types bring order to code. For example, if a variable `i` has
 type `usize` then we know that `i` is a number that can be used
@@ -25,6 +25,16 @@ Lets see how flux lets you refine basic or primitive
 types like `i32` or `usize` or `bool` with logical constraints that
 can be checked at compile time.
 
+*Flux Specifications* First off, we need to add some incantations that pull in the mechanisms
+for writing flux specifications as Rust _attributes_.
+
+```flux
+#![allow(unused)]
+extern crate flux_rs;
+use flux_rs::attrs::*;
+```
+
+
 == Indexed Types
 
 The simplest kind of refinement type in flux is a type that is
@@ -40,18 +50,6 @@ _indexed_ by a logical value. For example
 )
 ]
 
-// <!-- SLIDE -->
-
-=== Flux Specifications
-
-First off, we need to add some incantations that pull in the mechanisms
-for writing flux specifications as Rust _attributes_.
-
-```flux
-#![allow(unused)]
-extern crate flux_rs;
-use flux_rs::attrs::*;
-```
 
 
 === Post-Conditions
@@ -182,7 +180,7 @@ non-negative or less than `n`.
 // ]
 //
 Flux allows such specifications by pairing plain Rust types
-with _assertions_ that constrain the value#footnote[These are not arbitrary Rust expressions but a subset of expressions from logics that can be efficiently decided by SMT Solvers.]. For example, the type
+with _assertions_ that constrain the value#footnote[These are _not_ arbitrary Rust expressions: they are a subset of _pure_ expressions from logics that can be efficiently decided by SMT Solvers.]. For example, the type
 
 - `i32{v: 0 < v}` denotes the set of `i32` values that are positive,
 - `i32{v: n <= v}` denotes the set of `i32` values greater than or equal to `n`.
@@ -193,7 +191,7 @@ with _assertions_ that constrain the value#footnote[These are not arbitrary Rust
 === Existential Output Types
 
 We can rewrite `mk_10` with the output type `i32{v:0 < v}` that
-specifies a weaker property, that the value returned by `mk_ten_pos`
+specifies that the value returned by `mk_ten_pos`
 is positive (not necessarily equal to `10`).
 
 ```flux
@@ -212,7 +210,7 @@ value of an `i32` and give it a refined type which
 says the result is non-negative _and_ exceeds the input `n`.
 
 ```flux
-#[spec(fn (n:i32) -> i32{v: 0<= v && n <= v})]
+#[spec(fn (n:i32) -> i32{v: 0 <= v && n <= v})]
 pub fn abs(n: i32) -> i32 {
     if 0 <= n { n } else { 0 - n }
 }
