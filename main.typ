@@ -1,7 +1,7 @@
 #import "@preview/mantys:1.0.2": *
-#import "orly-modified.typ" as orly-modified
 #import "@preview/codly:1.3.0": *
 #import "@preview/codly-languages:0.1.1": *
+#import "typ/orly-modified.typ" as orly-modified
 
 #show: mantys(
   name: "flux-book",
@@ -20,7 +20,7 @@
 
   theme: orly-modified,
   theme-options: (
-    title-image: image("figs/flux.png", height: auto),
+    title-image: image("img/flux.png", height: auto),
   ),
   wrap-snippets: true,
   title: "Verify Rust with Flux",
@@ -34,6 +34,41 @@
 
 // Set global heading numbering to use arabic numbers
 #set heading(numbering: "1.1")
+
+// Reset figure counter for each chapter
+#show heading.where(level: 1): it => {
+  counter(figure).update(0)
+  it
+}
+
+// Style figure captions with chapter-based numbering
+#show figure: it => {
+  let chapter-num = counter(heading).get().first()
+  let fig-num = counter(figure).get().first()
+
+  block[
+    #it.body
+    #align(center)[
+      *Figure #chapter-num.#fig-num:* #it.caption.body
+    ]
+  ]
+}
+
+// Enable and style references with chapter-based figure numbering
+#show ref: it => {
+  let el = it.element
+  if el != none and el.func() == figure {
+    // Get the chapter number at the figure's location
+    let chapter-num = counter(heading).at(el.location()).first()
+    // Get the figure number within that chapter
+    let fig-num = counter(figure).at(el.location()).first()
+    // Display as "Chapter.Figure" (e.g., "2.1")
+    link(el.location())[Figure #chapter-num.#fig-num]
+  } else {
+    // Default reference
+    it
+  }
+}
 
 // Render flux blocks also as rust
 #show raw.where(lang: "flux"): it => {
@@ -64,8 +99,8 @@ Fixing a hole where the rain gets in.
 
 #lorem(30)
 
-#include("ch01_refinements.typ")
-#include("ch02_ownership.typ")
+#include("typ/ch01_refinements.typ")
+#include("typ/ch02_ownership.typ")
 
 = Random Junk
 

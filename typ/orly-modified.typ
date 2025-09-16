@@ -65,7 +65,7 @@
     inset: 8pt,
     width: 100%,
     spacing: 2%,
-    std.text(size: .88em, fill: color.darken(60%), body),
+    std.text(size: 1.0em, fill: color.darken(60%), body),
   )
 }
 
@@ -243,9 +243,15 @@
   if doc.show-outline {
     set align(left)
     set block(spacing: 0.65em)
-    show outline.entry.where(level: 1): it => {
-      v(0.85em, weak: true)
-      strong(link(it.element.location(), it.inner()))
+    show outline.entry: it => {
+      if it.element.numbering != none {
+        if it.level == 1 {
+          v(0.85em, weak: true)
+          strong(link(it.element.location(), it))
+        } else {
+          it
+        }
+      }
     }
 
     // v(1fr)
@@ -263,3 +269,8 @@
 }
 
 #let last-page(doc, theme) = { }
+
+#let infotip(title, body) = alert("info", [
+  *#title:*
+  #body
+])

@@ -7,7 +7,7 @@ RS_FILES := $(patsubst typ/%.typ,src/%.rs,$(TYP_FILES))
 all: main.pdf md-files rs-files
 
 main.pdf:
-	typst compile typ/main.typ main.pdf
+	typst compile main.typ main.pdf
 
 md-files: $(MD_FILES)
 
@@ -15,6 +15,7 @@ md/tutorial/%.md: typ/%.typ
 	@mkdir -p md/tutorial
 	pandoc $< -t gfm -o $@
 	@./scripts/markdown.sh $@
+	cp -r typ/figs/* md/
 
 rs-files: $(RS_FILES)
 

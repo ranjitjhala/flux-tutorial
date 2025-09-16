@@ -12,3 +12,5 @@ line-numbers = false
 [output.html]
 theme = "flux_theme"
 additional-css = ["flux_theme/flux.css"]
+
+[preprocessor.alerts]

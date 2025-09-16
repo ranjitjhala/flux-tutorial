@@ -1,6 +1,6 @@
 #import "orly-modified.typ": alert
 
-= Refining Types <01-refinements>
+= Refining Types <ch:01>
 
 Types bring order to code. For example, if a variable `i` has
 type `usize` then we know that `i` is a number that can be used
@@ -25,8 +25,11 @@ Lets see how flux lets you refine basic or primitive
 types like `i32` or `usize` or `bool` with logical constraints that
 can be checked at compile time.
 
-*Flux Specifications* First off, we need to add some incantations that pull in the mechanisms
-for writing flux specifications as Rust _attributes_.
+#alert("info", [
+  *Flux Specifications:* First off, we need to add some incantations that pull in the mechanisms for writing flux specifications as Rust attributes.
+])
+
+
 
 ```flux
 #![allow(unused)]
@@ -47,9 +50,30 @@ _indexed_ by a logical value. For example
   [*Type*], [*Meaning*],
   [`i32[10]`], [The  singleton set of `i32` values equal to `10`],
   [`bool[true]`], [The singleton set of `bool` values equal to `true`],
+  [`char['c']`], [The singleton set of `char` values equal to `'c'`],
+
 )
 ]
 
+For example, lets write a little block of code with variables whose types are refined like the above.
+
+```flux
+fn examples() {
+  let x = 10;     // x: i32[10]
+  let y = true;   // y: bool[true]
+  let z = 'c';    // z: char['c']
+}
+```
+
+#alert("info", [
+  *Flux View:* If you open this `.rs` file in the
+  #link("https://marketplace.visualstudio.com/items?itemName=RanjitJhala.flux-checker")[VSCode extension], toggle the `Flux View`, check the `trace` box and hit save, then on the right you should see the type annotations for each variable, as shown in the figure below @fig:examples.
+])
+
+#figure(
+  image("../img/ch01_examples.png", width: 90%),
+  caption: [Viewing Flux types in VSCode],
+) <fig:examples>
 
 
 === Post-Conditions
@@ -111,7 +135,7 @@ fn test_assert(){
 }
 ```
 
-then `flux` will complain that
+then Flux will complain that
 
 ```
 error[E0999]: refinement type error
@@ -169,16 +193,6 @@ care about some _properties_ that it may have. For example, we might
 not care that an `i32` is equal to `5` or `10` or `n` but that it is
 non-negative or less than `n`.
 //
-// #align(center)[
-// #table(
-//   columns: 2,
-//   align: (left, left),
-//   [*Type*], [*Meaning*],
-//   [`i32{v: 0 < v}`], [The set of `i32` values that are positive],
-//   [`i32{v: n <= v}`], [The set of `i32` values greater than or equal to `n`],
-// )
-// ]
-//
 Flux allows such specifications by pairing plain Rust types
 with _assertions_ that constrain the value#footnote[These are _not_ arbitrary Rust expressions: they are a subset of _pure_ expressions from logics that can be efficiently decided by SMT Solvers.]. For example, the type
 
@@ -212,9 +226,34 @@ says the result is non-negative _and_ exceeds the input `n`.
 ```flux
 #[spec(fn (n:i32) -> i32{v: 0 <= v && n <= v})]
 pub fn abs(n: i32) -> i32 {
-    if 0 <= n { n } else { 0 - n }
+    if 0 <= n {
+      n
+    } else {
+      0 - n
+    }
 }
 ```
+
+
+The figure below @fig:ch01-abs shows the Flux view for `abs`.
+You can see the types at the `then` and the `else`
+branches. In the either case, `n` has the _indexed_
+type `i32[n]`, i.e. the value equals the logical
+integer `n`.
+//
+However, in the `then` branch shown on the left,
+note the additional *`Constraint`* of the form
+`0 <= n` that arises from the branch condition.
+//
+Correspondingly, in the `else` branch shown on
+the right, we have the _negation_ of that condition.
+Further, `res` has type `i32[0 - n]`.
+
+#figure(
+  image("../img/ch01_abs.png", width: 90%),
+  placement: top,
+  caption: [How `if-else` branches affect Flux types],
+) <fig:ch01-abs>
 
 // <!-- SLIDE -->
 
@@ -246,7 +285,7 @@ Note that we
 1. _constrain_ the inputs to `s + k <= 100`, and
 2. _refine_ the value of the output to be exactly `usize[s + k]`.
 
-*Exercise* Why does flux reject the second call to `add_points`?
+*EXERCISE* Why does flux reject the second call to `add_points`?
 
 // <!-- SLIDE -->
 
