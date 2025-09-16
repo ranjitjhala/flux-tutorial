@@ -15,7 +15,7 @@ md/tutorial/%.md: typ/%.typ
 	@mkdir -p md/tutorial
 	pandoc $< -t gfm -o $@
 	@./scripts/markdown.sh $@
-	cp -r typ/figs/* md/
+	cp -r img/* md/img/
 
 rs-files: $(RS_FILES)
 
