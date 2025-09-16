@@ -2,13 +2,21 @@
 
 = Ownership in Flux
 
+```flux
+#![allow(unused)]
+extern crate flux_rs;
+use flux_rs::attrs::*;
+```
+
 In the previous @ch:01 we saw how to refine basic Rust
 types like `i32` and `bool` with _indices_ and _constraints_ to
 constrain the set of values described by those types.
-For instance, we wrote the function `assert` function
-which can _only_ be called with `true`
+//
+For instance, we wrote an `assert` function which can
+_only_ be called with `true` so if the code typechecks,
+we know that the assertion _cannot_ fail at runtime.
 
-```rust
+```flux
 #[spec(fn (bool[true]))]
 fn assert(b: bool) {
     if !b {
@@ -30,11 +38,7 @@ Next, lets see how Flux melds indexes and constraints
 with Rust's ownership mechanisms to make refinements pleasant in
 the imperative setting.
 
-```flux
-#![allow(unused)]
-extern crate flux_rs;
-use flux_rs::attrs::*;
-```
+
 
 // #link("https://flux.goto.ucsd.edu/?example=ownership.rs")[Online Demo].
 
@@ -64,9 +68,21 @@ pub fn mk_three() -> i32 {
 }
 ```
 
-The variable `r` has _different types_ at each point inside `mk_three`.
-It starts off as `i32[0]`. The first increment changes it to `i32[1]`,
-then `i32[2]` and finally, the returned type `i32[3]`.
+As shown in the figure below  @fig:mk_three, the variable `r`
+has different types at each point inside `mk_three`.
+//
+It starts off as `i32[0]`.
+//
+The first increment changes it to `i32[1]`,
+//
+then `i32[2]` and
+//
+finally, the returned type `i32[3]`.
+
+#figure(
+  image("../img/ch02_three.png", width: 100%),
+  caption: [The variable `r` has different types in `mk_three`.],
+) <fig:mk_three>
 
 === Exclusive Ownership and Loops
 
@@ -89,15 +105,14 @@ pub fn factorial(n: i32) -> i32 {
 }
 ```
 
-In the above code, `i` and `r` start off at `0` and `1` but then
-flux _infers_ (a story for another day) that inside the `while`
-loop #footnote[For those familiar with the term, these types
-are _loop invariants_]
+In the above code, `i` and `r` start off at `0` and `1`
+but then Flux infers that inside the `while` loop
 
 - `i` has type `i32{v:0<=v && v < n}`
 - `r` has type `i32{v:1<=v && i <= v}`
 
-and hence, upon exit since `i == n` we get that the result is at least `n`.
+and hence, upon exit since `i == n` we get that the result is at least `n`. For those familiar with the term, these types are
+*loop invariants*, that hold at that start and at each subsequent iteration of the loop.
 
 == Borrowing: Shared References
 
@@ -171,11 +186,13 @@ In `abs` the Rust parameter `p` names the reference but the
 `@n` names the (input) _value_ and lets us use it to provide
 more information about the output of `abs`.
 
-*EXERCISE* Flux is _modular_ in that the _only_ information it knows
+#alert("success", [
+*EXERCISE:* Flux is _modular_ in that the _only_ information it knows
 about the implementation of `abs` is the signature. For example, if
 we change the output type of `abs` to `i32{v: 0 <= v}`, that is, if we
 _remove_ the `n <= v` conjunct. Can you predict which `assert`
 will be rejected by Flux?
+])
 
 
 == Mutable References
@@ -212,8 +229,9 @@ for example, if the old value was zero. We can fix this
 code by guarding the update with a test that ensures the
 original contents are in fact _non-zero_
 
-*EXERCISE* Can you _modify_ the code for `decr` so that Flux verifies it?
-
+#alert("success", [
+*EXERCISE* Can you modify the code for `decr` so that Flux verifies it?
+])
 
 === Aliased References
 

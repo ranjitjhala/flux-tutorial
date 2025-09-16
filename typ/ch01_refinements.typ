@@ -285,7 +285,9 @@ Note that we
 1. _constrain_ the inputs to `s + k <= 100`, and
 2. _refine_ the value of the output to be exactly `usize[s + k]`.
 
+#alert("success", [
 *EXERCISE* Why does flux reject the second call to `add_points`?
+])
 
 // <!-- SLIDE -->
 
@@ -297,7 +299,7 @@ As a last example, lets write a function to compute the factorial of `n`
 #[spec(fn (n:i32) -> i32{v:1<=v && n<=v})]
 pub fn factorial(n: i32) -> i32 {
     let mut i = 0;
-    let mut res = 1;
+    let mut res = 0;
     while i < n {
         i += 1;
         res = res * i;
@@ -310,6 +312,9 @@ The specification says the input must be non-negative, and the
 output is at least as large as the input. Unlike the previous
 examples, here we're actually _changing_ the values of `i` and `res`.
 
+#alert("success", [
+*EXERCISE* Why does flux reject the definition of `factorial`? Can you fix the code so that it is accepted?
+])
 // <!-- SLIDE -->
 
 == Summary

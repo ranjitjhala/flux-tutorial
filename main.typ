@@ -102,39 +102,39 @@ Fixing a hole where the rain gets in.
 #include("typ/ch01_refinements.typ")
 #include("typ/ch02_ownership.typ")
 
-= Random Junk
+// = Random Junk
 
-*Editable Rust*
-
-
-```flux
-fn stinker_pinker(x: i32) -> i32 {
-  x + 1
-}
-```
+// *Editable Rust*
 
 
-*Plain Rust*
-
-```flux
-fn incr(x: i32) -> i32 {
-  x + 2
-}
-```
-
-#alert("info", [
-  *Note:* Make sure you have the latest version of Flux installed before proceeding with these examples.
-])
+// ```flux
+// fn stinker_pinker(x: i32) -> i32 {
+//   x + 1
+// }
+// ```
 
 
-#alert("warning", [
-  *Note:* Make sure you have the latest version of Flux installed before proceeding with these examples.
-])
+// *Plain Rust*
 
-#alert("error", [
-  *Note:* Make sure you have the latest version of Flux installed before proceeding with these examples.
-])
+// ```flux
+// fn incr(x: i32) -> i32 {
+//   x + 2
+// }
+// ```
 
-#alert("success", [
-  *Note:* Make sure you have the latest version of Flux installed before proceeding with these examples.
-])
+// #alert("info", [
+//   *Note:* Make sure you have the latest version of Flux installed before proceeding with these examples.
+// ])
+
+
+// #alert("warning", [
+//   *Note:* Make sure you have the latest version of Flux installed before proceeding with these examples.
+// ])
+
+// #alert("error", [
+//   *Note:* Make sure you have the latest version of Flux installed before proceeding with these examples.
+// ])
+
+// #alert("success", [
+//   *Note:* Make sure you have the latest version of Flux installed before proceeding with these examples.
+// ])
