@@ -347,10 +347,8 @@ Lets rewrite `union` as an `impl` method on `Range`.
 impl Range {
   #[spec(fn(&Self[@r1], &Self[@r2]) -> Self)]
   pub fn union(&self, other: &Range) -> Range {
-    let start =
-      if self.start < other.start { self.start } else { other.start };
-    let end =
-      if self.end < other.end { other.end } else { self.end };
+    let start = min(self.start, other.start);
+    let end = max(self.end, other.end);
     Range { start, end }
   }
 }

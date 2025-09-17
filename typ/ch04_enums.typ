@@ -1,3 +1,5 @@
+#import "../orly-modified.typ": alert
+
 = Refining Enums
 
 ```fluxhidden
@@ -69,8 +71,10 @@ The definition above tells flux that `Some(...)`
 has the refined type `Option<...>[{valid: true}]`,
 and `None` has the refined type `Option<...>[{valid: false}]`.
 
-**NOTE** When there is a _single_ refinement index, we can skip the `{valid:b}`
+#alert("info", [
+*TIP:* When there is a _single_ refinement index, we can skip the `{valid:b}`
 and just write `b`.
+])
 
 ```flux
 #[spec(fn () -> Option<i32>[true])]
@@ -194,9 +198,11 @@ pub fn safe_divide(n: i32, k: i32) -> Option<i32> {
 }
 ```
 
-**EXERCISE:** Why does the test below fail to type check?
+#alert("success", [
+*EXERCISE:* Why does the test below fail to type check?
 Can you fix the `spec` for `safe_divide` so flux is happy
 with `test_safe_divide`?
+])
 
 ```flux
 fn test_safe_divide() -> i32 {
@@ -231,12 +237,14 @@ impl Positivei32 {
 }
 ```
 
-**EXERCISE:** The code below has a function that
+#alert("success", [
+*EXERCISE:* The code below has a function that
 invokes the smart constructor and then `unwrap`s
 the result. Why is flux complaining? Can you fix
 the `spec` of `new` so that the `test_unwrap` figure
 out how to fix the `spec` of `new` so that `test_new_unwrap`
 is accepted?
+])
 
 ```flux
 fn test_new_unwrap() {
@@ -344,7 +352,9 @@ impl Timer {
 }
 ```
 
-**EXERCISE:** Can you fix the `spec` for `tick` so that flux accepts the following test?
+#alert("success", [
+*EXERCISE:* Can you fix the `spec` for `tick` so that Flux accepts `test_tick`?
+])
 
 ```flux
 fn test_tick() {

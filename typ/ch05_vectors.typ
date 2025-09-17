@@ -1,3 +1,5 @@
+#import "../orly-modified.typ": alert
+
 = Opaque Types: Refined Vectors
 
 ```fluxhidden
@@ -149,8 +151,10 @@ fn test_push() -> RVec<i32> {
 }
 ```
 
-**EXERCISE:**: Can you correctly implement the code
+#alert("success", [
+*EXERCISE:*: Can you correctly implement the code
 for `zeros` so that it typechecks?
+])
 
 ```flux
 #[spec(fn(n: usize) -> RVec<i32>[n])]
@@ -249,8 +253,10 @@ impl<T> RVec<T> {
 }
 ```
 
-**EXERCISE:** Can you fix the `spec` for `len` so that the code below
+#alert("success", [
+*EXERCISE:* Can you fix the `spec` for `len` so that the code below
 verifies, i.e. so that flux "knows" that
+])
 
 - after two `push`es, the value returned by `.len()` is exactly `2`, and
 - after two `pop`s the size is `0` again.
@@ -298,9 +304,11 @@ impl<T> RVec<T> {
 
 === Summing the Elements of an `RVec`
 
-**EXERCISE:** Can you spot and fix the _off-by-one_ error
+#alert("success", [
+*EXERCISE:* Can you spot and fix the _off-by-one_ error
 in the code below which loops over the elements
 of an `RVec` and sums them up? [^1]
+])
 
 ```flux
 fn sum_vec(vec: &RVec<i32>) -> i32 {
@@ -386,10 +394,12 @@ pub fn fib(n: usize) -> i32 {
 }
 ```
 
-**EXERCISE:** Flux is unhappy with the `pop` at the end of the function
+#alert("success", [
+*EXERCISE:* Flux is unhappy with the `pop` at the end of the function
 which returns the _last_ value as the result: it thinks the vector
-_may be empty_ and so the `pop` call may fail ... Can you spot and fix
+_may be empty_ and so the `pop` call may fail. Can you spot and fix
 the problem?
+])
 
 ```rust
 error[FLUX]: precondition might not hold
@@ -460,7 +470,9 @@ error[FLUX]: arithmetic operation may overflow
 
 - The `size` variable may _underflow_ as `left` may exceed `right`!
 
-**EXERCISE:** Can you the spot off-by-one and figure out a fix?
+#alert("success", [
+*EXERCISE:* Can you spot the off-by-one and work out a fix?
+])
 
 == Summary
 

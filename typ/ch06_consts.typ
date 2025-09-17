@@ -1,3 +1,5 @@
+#import "../orly-modified.typ": alert
+
 = Const Generics
 
 [Online demo](https://flux.goto.ucsd.edu/index.html#?demo=arrays.rs)
@@ -81,7 +83,7 @@ Fortunately, `flux` knows about the sizes of arrays and slices. At compile time,
 `flux` warns about two possible errors in `average_color`
 
 #figure(
-    image("../img/04-arrays-average-error.png", width=90%),
+    image("../img/04-arrays-average-error.png", width: 90%),
     caption: [Flux warns about possible errors in `average_color`],
 )
 
@@ -98,7 +100,7 @@ We can fix these errors by requiring that the input
 ```
 
 #figure(
-    image("../img/04-arrays-average-fix.png", width=90%),
+    image("../img/04-arrays-average-fix.gif", width: 90%),
     caption: [Refinements ensure `average_color` is safe],
 )
 
@@ -156,11 +158,14 @@ Fortunately, `flux` understands const-generics as well!
 
 First off, it warns us about the fact that the accesses with the index may be out of bounds.
 
-<img src="../img/04-arrays-dotk-error.png" width="100%">
+#figure(
+    image("../img/04-arrays-dotk-error.png", width:90%),
+    caption: [Flux warns about possible out-of-bounds access in `dot_k`],
+)
 
 We can fix it in two ways.
 
-- The **permissive** approach is to accept any `k` but restrict the iteration to the valid elements
+- The *permissive* approach is to accept any `k` but restrict the iteration to the valid elements
 
 ```rust
 fn dot_k<const N:usize>(x: [f32;N], y: [f32;N], k: usize) -> f32 {
@@ -173,9 +178,12 @@ fn dot_k<const N:usize>(x: [f32;N], y: [f32;N], k: usize) -> f32 {
 }
 ```
 
-<img src="../img/04-arrays-dotk-permissive.gif" width="100%">
+#figure(
+    image("../img/04-arrays-dotk-permissive.gif", width:90%),
+    caption: [A permissive version of `dot_k` that always works],
+)
 
-- The **strict** approach is to require that `k` be less than or equal to `N`
+- The *strict* approach is to require that `k` be less than or equal to `N`
 
 ```rust
 #[sig(fn(x: [f32;N], y: [f32;N], k:usize{k <= N}) -> f32)]
@@ -188,7 +196,10 @@ fn dot_k<const N:usize>(x: [f32;N], y: [f32;N], k: usize) -> f32 {
 }
 ```
 
-<img src="../img/04-arrays-dotk-strict.gif" width="100%">
+#figure(
+    image("../img/04-arrays-dotk-strict.gif", width:90%),
+    caption: [A strict version of `dot_k` that requires `k <= N`],
+)
 
 Do you understand why
 
