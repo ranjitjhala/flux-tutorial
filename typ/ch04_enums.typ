@@ -18,7 +18,7 @@ of legal values, for example, to define a `Positivei32` or a `Range` `struct` wh
 the `start` was less than or equal to the `end`. Next, lets see how the same mechanism
 can be profitably used to let us check properties of `enums` at compile time.
 
-<!-- SLIDE -->
+// <!-- SLIDE -->
 
 == Failure is an Option
 
@@ -33,9 +33,9 @@ thread ... panicked at ... called `Option::unwrap()` on a `None` value
 Lets see how to refine `enum`'s like `Option` to
 let us `unwrap` without the anxiety of run-time failure.
 
-<!-- SLIDE -->
+// <!-- SLIDE -->
 
-=== A Refined Option
+=== A Refined Option <ch:04_enums:refined-option>
 
 To do so, lets define a custom `Option` type [^1] that
 is indexed by a `bool` which indicates whether or not
@@ -61,7 +61,7 @@ However, we have tricked out the type in two ways.
 - First, we added a `bool` sorted index that aims to track whether the option is `valid`;
 - Second, we used the `variant` attribute to specify the value of the index for the `Some` and `None` cases.
 
-<!-- SLIDE -->
+// <!-- SLIDE -->
 
 === Constructing Options
 
@@ -84,7 +84,7 @@ fn test_none() -> Option<i32> {
 }
 ```
 
-<!-- SLIDE -->
+// <!-- SLIDE -->
 
 === Destructing Options by Pattern Matching
 
@@ -105,7 +105,7 @@ impl<T> Option<T> {
 }
 ```
 
-<!-- SLIDE -->
+// <!-- SLIDE -->
 
 === Never Do This!
 
@@ -140,7 +140,7 @@ fn test_unreachable(n: usize) {
 }
 ```
 
-<!-- SLIDE -->
+// <!-- SLIDE -->
 
 === Unwrap Without Anxiety!
 
@@ -170,14 +170,14 @@ Hence, flux concludes that pattern is dead code
 (like the `x < 12` branch is dead code in the
 `test_unreachable` above.)
 
-<!-- SLIDE -->
+// <!-- SLIDE -->
 
 == Using `unwrap`
 
 Next, lets see some examples of how to use refined options
 to safely `unwrap`.
 
-<!-- SLIDE -->
+// <!-- SLIDE -->
 
 === Safe Division
 
@@ -194,7 +194,7 @@ pub fn safe_divide(n: i32, k: i32) -> Option<i32> {
 }
 ```
 
-**EXERCISE** Why does the test below fail to type check?
+**EXERCISE:** Why does the test below fail to type check?
 Can you fix the `spec` for `safe_divide` so flux is happy
 with `test_safe_divide`?
 
@@ -204,7 +204,7 @@ fn test_safe_divide() -> i32 {
 }
 ```
 
-<!-- SLIDE -->
+// <!-- SLIDE -->
 
 === Smart Constructors Revisited
 
@@ -231,7 +231,7 @@ impl Positivei32 {
 }
 ```
 
-**EXERCISE** The code below has a function that
+**EXERCISE:** The code below has a function that
 invokes the smart constructor and then `unwrap`s
 the result. Why is flux complaining? Can you fix
 the `spec` of `new` so that the `test_unwrap` figure
@@ -244,7 +244,7 @@ fn test_new_unwrap() {
 }
 ```
 
-<!-- SLIDE -->
+// <!-- SLIDE -->
 
 == TypeStates: A Refined Timer
 
@@ -259,7 +259,7 @@ with two variants:
 Somehow using refinements to ensure that the timer can only
 be set to `Inactive` when `n < 1`.
 
-<!-- SLIDE -->
+// <!-- SLIDE -->
 
 === Refined Timers
 
@@ -282,7 +282,7 @@ The flux definitions ensure that `Timer` has two variants
 - `Inactive`, which has a `remaining` index of `0`, and
 - `CountDown(n)`, which has a `remaining` index of `n`.
 
-<!-- SLIDE -->
+// <!-- SLIDE -->
 
 === Timer Implementation
 
@@ -302,7 +302,7 @@ impl Timer {
 }
 ```
 
-<!-- SLIDE -->
+// <!-- SLIDE -->
 
 === Deactivate the Timer
 
@@ -319,7 +319,7 @@ fn test_deactivate() {
 }
 ```
 
-<!-- SLIDE -->
+// <!-- SLIDE -->
 
 === Ticking the Timer
 
@@ -344,7 +344,7 @@ impl Timer {
 }
 ```
 
-**EXERCISE** Can you fix the `spec` for `tick` so that flux accepts the following test?
+**EXERCISE:** Can you fix the `spec` for `tick` so that flux accepts the following test?
 
 ```flux
 fn test_tick() {

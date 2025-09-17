@@ -29,7 +29,7 @@ a _refined vector_ API whose types track vector sizes and
 ensure --- at compile time --- that vector accesses cannot
 fail at runtime.
 
-<!-- SLIDE -->
+// <!-- SLIDE -->
 
 == Refining Vectors ...
 
@@ -46,7 +46,7 @@ pub struct RVec<T> {
 }
 ```
 
-<!-- SLIDE -->
+// <!-- SLIDE -->
 
 === ... to Track their Size
 
@@ -61,7 +61,7 @@ The idea is that
 - `RVec<RVec<f32>[n]>[m]` represents a vector of vectors of `f32` of size `m` and
   _each of_ whose elements is a vector of size `n`.
 
-<!-- SLIDE -->
+// <!-- SLIDE -->
 
 === ... but _Opaquely_
 
@@ -81,7 +81,7 @@ Next, lets see how to build such an API for creating and
 manipulating `RVec`, where the length is precisely tracked
 in the index.
 
-<!-- SLIDE -->
+// <!-- SLIDE -->
 
 === Creating Vectors
 
@@ -110,7 +110,7 @@ So the only way to use an `RVec` is to define a "trusted" API,
 and then use that in client code, where for example, callers
 of `RVec::new` get back an `RVec` indexed with `0` : the empty vector.
 
-<!-- SLIDE -->
+// <!-- SLIDE -->
 
 === Pushing Values
 
@@ -149,7 +149,7 @@ fn test_push() -> RVec<i32> {
 }
 ```
 
-**EXERCISE**: Can you correctly implement the code
+**EXERCISE:**: Can you correctly implement the code
 for `zeros` so that it typechecks?
 
 ```flux
@@ -228,7 +228,7 @@ note: this is the condition that cannot be proved
 
 // <img src="../img/test_macro_pop.gif" width="100%"> -->
 
-<!-- SLIDE -->
+// <!-- SLIDE -->
 
 === Querying the Size
 
@@ -249,7 +249,7 @@ impl<T> RVec<T> {
 }
 ```
 
-**EXERCISE** Can you fix the `spec` for `len` so that the code below
+**EXERCISE:** Can you fix the `spec` for `len` so that the code below
 verifies, i.e. so that flux "knows" that
 
 - after two `push`es, the value returned by `.len()` is exactly `2`, and
@@ -267,7 +267,7 @@ fn test_len() {
 }
 ```
 
-<!-- SLIDE -->
+// <!-- SLIDE -->
 
 == Random Access
 
@@ -294,11 +294,11 @@ impl<T> RVec<T> {
 }
 ```
 
-<!-- SLIDE -->
+// <!-- SLIDE -->
 
 === Summing the Elements of an `RVec`
 
-**EXERCISE** Can you spot and fix the _off-by-one_ error
+**EXERCISE:** Can you spot and fix the _off-by-one_ error
 in the code below which loops over the elements
 of an `RVec` and sums them up? [^1]
 
@@ -314,7 +314,7 @@ fn sum_vec(vec: &RVec<i32>) -> i32 {
 }
 ```
 
-<!-- SLIDE -->
+// <!-- SLIDE -->
 
 === Using the `Index` trait
 
@@ -341,7 +341,7 @@ impl<T> std::ops::IndexMut<usize> for RVec<T> {
 }
 ```
 
-<!-- SLIDE -->
+// <!-- SLIDE -->
 
 === Summing Nicely
 
@@ -359,7 +359,7 @@ fn sum_vec_fixed(vec: &RVec<i32>) -> i32 {
 }
 ```
 
-<!-- SLIDE -->
+// <!-- SLIDE -->
 
 == Memoization
 
@@ -386,7 +386,7 @@ pub fn fib(n: usize) -> i32 {
 }
 ```
 
-**EXERCISE** Flux is unhappy with the `pop` at the end of the function
+**EXERCISE:** Flux is unhappy with the `pop` at the end of the function
 which returns the _last_ value as the result: it thinks the vector
 _may be empty_ and so the `pop` call may fail ... Can you spot and fix
 the problem?
@@ -404,7 +404,7 @@ error[FLUX]: precondition might not hold
 
 // <img src="../img/fib.gif" width="100%"> -->
 
-<!-- SLIDE -->
+// <!-- SLIDE -->
 
 == Binary Search
 
@@ -460,7 +460,7 @@ error[FLUX]: arithmetic operation may overflow
 
 - The `size` variable may _underflow_ as `left` may exceed `right`!
 
-**EXERCISE** Can you the spot off-by-one and figure out a fix?
+**EXERCISE:** Can you the spot off-by-one and figure out a fix?
 
 == Summary
 

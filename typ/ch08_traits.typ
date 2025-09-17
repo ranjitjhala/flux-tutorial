@@ -96,7 +96,7 @@ error[E0999]: assertion might fail: possible out of bounds access
 
 === Specifying Non-Empty Slices
 
-**EXERCISE** Can you go back and add a flux `spec` for `get_first_slice` that says that the function
+**EXERCISE:** Can you go back and add a flux `spec` for `get_first_slice` that says that the function
 should  _only_ be called with _non-empty_ slices? The spec should look something like the below, except
 the `...` should be a constraint over `size`.
 
@@ -424,12 +424,12 @@ note: this is the condition that cannot be proved
    |                                 ^^^^^^^^^^^^^^^^^^^^^^^^
 ```
 
-**EXERCISE** Can you modify the code above so that the second call to `index`
+**EXERCISE:** Can you modify the code above so that the second call to `index`
 is accepted by flux?
 
 == Indexing Vectors with `usize`
 
-**EXERCISE** Let's implement the `Index` trait for `Vec` using `usize` indexes.
+**EXERCISE:** Let's implement the `Index` trait for `Vec` using `usize` indexes.
 The definition of `valid` is too permissive, can you modify it so that flux accepts
 the below `impl`?
 
@@ -446,7 +446,7 @@ impl <A:Copy> Index<usize> for Vec<A> {
 }
 ```
 
-**EXERCISE** Let's write a client that uses the `index` on `Vec`
+**EXERCISE:** Let's write a client that uses the `index` on `Vec`
 to compute a dot-product for two `Vec<f64>`. Can you fix the `spec`
 for `dot_vec` so flux accepts it?
 
@@ -463,7 +463,7 @@ fn dot_vec(xs: &Vec<f64>, ys: &Vec<f64>) -> f64 {
 
 == Indexing Vectors with Ranges
 
-**EXERCISE** Finally, lets extract _sub-slices_ from vectors using `Range<usize>` indexes.
+**EXERCISE:** Finally, lets extract _sub-slices_ from vectors using `Range<usize>` indexes.
 Why does flux reject the below `impl`? Can you edit the code so flux accepts it?
 
 ```flux

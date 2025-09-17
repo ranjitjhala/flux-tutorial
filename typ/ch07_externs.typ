@@ -114,7 +114,7 @@ fn first(slice: &[u32]) -> Option<u32> {
 }
 ```
 
-**EXERCISE** Unfortunately, flux does not know what `slice.len()` returns, and
+**EXERCISE:** Unfortunately, flux does not know what `slice.len()` returns, and
 so, cannot verify that the access `slice[0]` is safe! Can you help
 it by *fixing* the `extern_spec` for the method shown below?
 You might want to refresh your memory about the meaning of
@@ -259,7 +259,7 @@ fn test_unwrap() -> u8 {
 }
 ```
 
-**EXERCISE** The function `test_unwrap` above
+**EXERCISE:** The function `test_unwrap` above
 merrily `unwrap`s the result of the call `into_u8`.
 Flux is unhappy and flags an error even though surely
 the call will not panic! The trouble is that the "default"
@@ -284,7 +284,7 @@ pub fn safe_div(num: u32, denom: u32) -> Option<u32> {
 }
 ```
 
-**EXERCISE** The client `test_safe_div` shown below is certainly it is safe to
+**EXERCISE:** The client `test_safe_div` shown below is certainly it is safe to
 divide by two! Alas, Flux thinks otherwise: it cannot determine that output of
 `safe_div` may be safely `unwrap`ped. Can you figure out how to fix the specification
 for `safe_div` so that the code below verifies?
@@ -415,7 +415,7 @@ proving the assert.
 
 === Testing Emptiness
 
-**EXERCISE** Can you fix the spec for `is_empty` above so that the
+**EXERCISE:** Can you fix the spec for `is_empty` above so that the
 two assertions below are verified?
 
 ```flux
@@ -443,7 +443,7 @@ impl<T> [T] {
 }
 ```
 
-**EXERCISE** Can you fix the `extern_spec` for `into_vec` so that
+**EXERCISE:** Can you fix the `extern_spec` for `into_vec` so that
 the code below verifies?
 
 ```flux
@@ -469,14 +469,14 @@ fn pop_and_unwrap<T>(vec: &mut Vec<T>) -> T {
 }
 ```
 
-**EXERCISE** Flux chafes because the spec for `pop` is too _weak_:
+**EXERCISE:** Flux chafes because the spec for `pop` is too _weak_:
 above does not tell us _when_ the returned value is safe to unwrap.
 Can you go back and fix the spec for `fn pop` so that `pop_and_unwrap`
 verifies?
 
 === PopPop!
 
-**EXERCISE** Finally, as a parting exercise, can you work out
+**EXERCISE:** Finally, as a parting exercise, can you work out
 why flux rejects the `pop2` function below, and modify the spec
 so that it is accepted?
 

@@ -9,7 +9,7 @@
 
 - [Refinements](tutorial/ch01_refinements.md)
 - [Ownership](tutorial/ch02_ownership.md)
-- [Structs]()
+- [Structs](tutorial/ch03_structs.md)
 - [Enums]()
 - [Opaques]()
 - [Consts]()

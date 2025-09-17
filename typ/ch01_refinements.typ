@@ -26,7 +26,8 @@ types like `i32` or `usize` or `bool` with logical constraints that
 can be checked at compile time.
 
 #alert("info", [
-  *Flux Specifications:* First off, we need to add some incantations that pull in the mechanisms for writing flux specifications as Rust attributes.
+  *Flux Specifications:* First off, we need to add some incantations that pull in the mechanisms for writing Flux specifications as Rust attributes.
+  This is done by importing the `flux_rs` crate and the `flux_rs::attrs` module.
 ])
 
 
@@ -113,7 +114,7 @@ as indeed, in this case, the output result equals `9`!
 You can eliminate the error by editing the body
 to `5 + 4 + 1` or `5 + 5` or just `10`.
 
-// <!-- SLIDE -->
+// // <!-- SLIDE -->
 
 === Pre-Conditions
 
@@ -153,7 +154,7 @@ meaning at the second call to `assert` the input _may not_
 be `true`, as of course, in this case, it is `false`!
 Can you edit the code of `test` to fix the error?
 
-// <!-- SLIDE -->
+// // <!-- SLIDE -->
 
 == Index Parameters
 
@@ -184,7 +185,7 @@ pub fn test_pos(n: i32) {
 }
 ```
 
-// <!-- SLIDE -->
+// // <!-- SLIDE -->
 
 == Existential Types
 
@@ -200,7 +201,7 @@ with _assertions_ that constrain the value#footnote[These are _not_ arbitrary Ru
 - `i32{v: n <= v}` denotes the set of `i32` values greater than or equal to `n`.
 
 
-// <!-- SLIDE -->
+// // <!-- SLIDE -->
 
 === Existential Output Types
 
@@ -215,7 +216,7 @@ pub fn mk_ten_pos() -> i32 {
 }
 ```
 
-// <!-- SLIDE -->
+// // <!-- SLIDE -->
 
 === An `abs`olute value function
 
@@ -255,7 +256,7 @@ Further, `res` has type `i32[0 - n]`.
   caption: [How `if-else` branches affect Flux types],
 ) <fig:ch01-abs>
 
-// <!-- SLIDE -->
+// // <!-- SLIDE -->
 
 == Combining Indexes & Constraints <ch:01_refinements:combining-indexes-and-constraints>
 
@@ -286,10 +287,10 @@ Note that we
 2. _refine_ the value of the output to be exactly `usize[s + k]`.
 
 #alert("success", [
-*EXERCISE* Why does flux reject the second call to `add_points`?
+*EXERCISE:* Why does Flux reject the second call to `add_points`?
 ])
 
-// <!-- SLIDE -->
+// // <!-- SLIDE -->
 
 === Example: `factorial`
 
@@ -313,9 +314,9 @@ output is at least as large as the input. Unlike the previous
 examples, here we're actually _changing_ the values of `i` and `res`.
 
 #alert("success", [
-*EXERCISE* Why does flux reject the definition of `factorial`? Can you fix the code so that it is accepted?
+*EXERCISE:* Why does flux reject the definition of `factorial`? Can you fix the code so that it is accepted?
 ])
-// <!-- SLIDE -->
+// // <!-- SLIDE -->
 
 == Summary
 

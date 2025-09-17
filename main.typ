@@ -35,6 +35,18 @@
 // Set global heading numbering to use arabic numbers
 #set heading(numbering: "1.1")
 
+// // Special handling for Index heading - no numbering
+// #show heading: it => {
+//   if it.body == [Index] {
+//     // Remove numbering for Index heading
+//     set heading(numbering: none)
+//     it
+//   } else {
+//     // Use default numbering for other headings
+//     it
+//   }
+// }
+
 // Reset figure counter for each chapter
 #show heading.where(level: 1): it => {
   counter(figure).update(0)
@@ -88,13 +100,39 @@
   []
 }
 
+// Style quotes: italics, centered, 80% width
+#show quote: it => {
+  align(left)[
+    #v(-1.0em)  // Reduce whitespace above the quote
+    #block(
+      width: 95%,
+      inset: 1em,
+      [#set text(style: "italic")
+       #it.body]
+    )
+    #v(-1.0em)  // Reduce whitespace above the quote
+  ]
+}
+
 
 // Add 1em vertical space after level 1 headings (chapters)
 #show heading.where(level: 1 ): it => {
   set text(font: "Liberation Serif", size: 1em, weight: "bold")
   it
-  v(0.5em)
+  v(1em)
 }
+
+// Add vertical space after level 2 headings (sections)
+#show heading.where(level: 2): it => {
+  it
+  v(0.7em)
+}
+
+#show heading.where(level: 3): it => {
+  it
+  v(0.4em)
+}
+
 
 // Add 1em vertical space after level 1 headings (chapters)
 // #show heading.where(level: 3): it => {
@@ -115,46 +153,8 @@ Fixing a hole where the rain gets in.
 #include("typ/ch01_refinements.typ")
 #include("typ/ch02_ownership.typ")
 #include("typ/ch03_structs.typ")
-#include("typ/ch04_enums.typ")
-#include("typ/ch05_vectors.typ")
-#include("typ/ch06_consts.typ")
-#include("typ/ch07_externs.typ")
-#include("typ/ch08_traits.typ")
-
-
-// = Random Junk
-
-// *Editable Rust*
-
-
-// ```flux
-// fn stinker_pinker(x: i32) -> i32 {
-//   x + 1
-// }
-// ```
-
-
-// *Plain Rust*
-
-// ```flux
-// fn incr(x: i32) -> i32 {
-//   x + 2
-// }
-// ```
-
-// #alert("info", [
-//   *Note:* Make sure you have the latest version of Flux installed before proceeding with these examples.
-// ])
-
-
-// #alert("warning", [
-//   *Note:* Make sure you have the latest version of Flux installed before proceeding with these examples.
-// ])
-
-// #alert("error", [
-//   *Note:* Make sure you have the latest version of Flux installed before proceeding with these examples.
-// ])
-
-// #alert("success", [
-//   *Note:* Make sure you have the latest version of Flux installed before proceeding with these examples.
-// ])
+// #include("typ/ch04_enums.typ")
+// #include("typ/ch05_vectors.typ")
+// #include("typ/ch06_consts.typ")
+// #include("typ/ch07_externs.typ")
+// #include("typ/ch08_traits.typ")

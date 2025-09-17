@@ -75,12 +75,15 @@ panics at runtime:
 thread 'main' panicked ... index out of bounds: the len is 3 but the index is 3
 ```
 
-== Refined Compile-time Safety
+== Refined Compile-time Safety <ch:06_consts:refined-compile-time-safety>
 
 Fortunately, `flux` knows about the sizes of arrays and slices. At compile time,
 `flux` warns about two possible errors in `average_color`
 
-<img src="../img/04-arrays-average-error.png" width="100%">
+#figure(
+    image("../img/04-arrays-average-error.png", width=90%),
+    caption: [Flux warns about possible errors in `average_color`],
+)
 
 1. The index `i` may be out of bounds when accessing `p[i]` and
 2. The division can panic as `pixels` may be empty (i.e. have length `0`).
@@ -94,7 +97,10 @@ We can fix these errors by requiring that the input
 #[sig(fn(pixels: &[Pixel][@n], i:usize{i < 3}) -> u64 requires n > 0)]
 ```
 
-<img src="../img/04-arrays-average-fix.gif" width="100%">
+#figure(
+    image("../img/04-arrays-average-fix.png", width=90%),
+    caption: [Refinements ensure `average_color` is safe],
+)
 
 == Const Generics
 

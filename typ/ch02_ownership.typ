@@ -230,7 +230,7 @@ code by guarding the update with a test that ensures the
 original contents are in fact _non-zero_
 
 #alert("success", [
-*EXERCISE* Can you modify the code for `decr` so that Flux verifies it?
+*EXERCISE:* Can you modify the code for `decr` so that Flux verifies it?
 ])
 
 === Aliased References
@@ -329,7 +329,8 @@ fn test_incr() {
 
 == Summary
 
-To sum up, Flux exploits Rust's ownership mechanisms
-to track properties of _shared_ (`&T`) and _mutable_
-(`&mut T`) references, and additionally uses (`ensures`)
-clauses to specify when the type itself is _changed_ by a call.
+To sum up, Flux exploits Rust's ownership mechanisms to
+
+1. *track properties* of _shared_ references (`&T`)
+2. *preserve invariants* of _mutable_ references (`&mut T`), and
+3. *strongly update* types of _strongly mutable_ references with `ensures` clauses that specify the type after the call.
