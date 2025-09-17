@@ -28,5 +28,6 @@ clean:
 	rm -f main.pdf
 	rm -rf md/tutorial/*
 	rm -rf src/ch*.rs
+	rm -rf log
 
 .PHONY: md-files
