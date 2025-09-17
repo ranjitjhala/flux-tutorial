@@ -1,6 +1,6 @@
-# Opaque Types: Refined Vectors
+= Opaque Types: Refined Vectors
 
-```rust, editable, hidden
+```fluxhidden
 #![allow(unused)]
 extern crate flux_rs;
 use flux_rs::attrs::*;
@@ -31,14 +31,14 @@ fail at runtime.
 
 <!-- SLIDE -->
 
-## Refining Vectors ...
+== Refining Vectors ...
 
 To track sizes, lets define a `struct` that
 is just a _wrapper_ around the `std::vec::Vec`
 type, but with a refinement index that tracks
 the size of the vector.
 
-```rust, editable
+```flux
 #[opaque]
 #[refined_by(len: int)]
 pub struct RVec<T> {
@@ -48,7 +48,7 @@ pub struct RVec<T> {
 
 <!-- SLIDE -->
 
-### ... to Track their Size
+=== ... to Track their Size
 
 As [with other structs](./03-structs.md) we're using `refined_by`
 to _index_ the `RVec` with an `int` value (that will represent
@@ -63,7 +63,7 @@ The idea is that
 
 <!-- SLIDE -->
 
-### ... but _Opaquely_
+=== ... but _Opaquely_
 
 The `opaque` attribute tells flux that we're not
 going to _directly_ connect the `len` to any of
@@ -83,11 +83,11 @@ in the index.
 
 <!-- SLIDE -->
 
-### Creating Vectors
+=== Creating Vectors
 
 I suppose one must start with nothing: the empty vector.
 
-```rust, editable
+```flux
 #[trusted]
 impl<T> RVec<T> {
     #[spec(fn() -> RVec<T>[0])]
@@ -112,14 +112,14 @@ of `RVec::new` get back an `RVec` indexed with `0` : the empty vector.
 
 <!-- SLIDE -->
 
-### Pushing Values
+=== Pushing Values
 
 An empty vector is a rather desolate thing.
 
 To be of any use, we need to be able to `push`
 values into it, like so
 
-```rust, editable
+```flux
 #[trusted]
 impl<T> RVec<T> {
     #[spec(fn(self: &mut RVec<T>[@n], T) ensures self: RVec<T>[n+1])]
@@ -129,14 +129,16 @@ impl<T> RVec<T> {
 }
 ```
 
-The refined type for `push` says that it takes a [_updatable_ reference](./02-ownership.md#borrowing-updatable-references) to an `RVec<T>` of size `n` and, a value `T`
-and ensures that upon return, the size of `self` is increased by `1`.
+The refined type for `push` says that it takes a
+_strong reference_ (described in @ch:02_ownership:strongly-mutable-references)
+to an `RVec<T>` of size `n` and, a value `T` and ensures that upon return,
+the size of `self` is increased by `1`.
 
-### Creating a Vector with `push`
+=== Creating a Vector with `push`
 
 Lets test that the types are in fact tracking sizes.
 
-```rust, editable
+```flux
 #[spec(fn () -> RVec<i32>[3])]
 fn test_push() -> RVec<i32> {
     let mut v = RVec::new(); // v: RVec<i32>[0]
@@ -150,7 +152,7 @@ fn test_push() -> RVec<i32> {
 **EXERCISE**: Can you correctly implement the code
 for `zeros` so that it typechecks?
 
-```rust, editable
+```flux
 #[spec(fn(n: usize) -> RVec<i32>[n])]
 fn zeros(n:usize) -> RVec<i32> {
     let mut v = RVec::new(); // v: RVec<i32>[0]
@@ -163,7 +165,7 @@ fn zeros(n:usize) -> RVec<i32> {
 }
 ```
 
-### Popping Values
+=== Popping Values
 
 Not much point stuffing things into a vector if we can't get them out again.
 For that, we might implement a `pop` method that returns the _last_ element
@@ -173,7 +175,7 @@ Aha, but what if the vector is empty? You _could_ return an
 `Option<T>` _or_ since we're tracking sizes, we could
 _require_ that `pop` only be called with non-empty vectors.
 
-```rust, editable
+```flux
 #[trusted]
 impl<T> RVec<T> {
     #[spec(fn(self: &mut {RVec<T>[@n] | 0 < n}) -> T
@@ -187,13 +189,13 @@ impl<T> RVec<T> {
 Note that unlike `push` which works for _any_ `RVec<T>[@n]`, the `pop`
 method requires that `0 < n` i.e. that the vector is _not_ empty.
 
-### Using the `push/pop` API
+=== Using the `push/pop` API
 
 Now already `flux` can start checking some code, for example if you `push` two
 elements, then you can `pop` twice, but flux will reject the third `pop` at
 compile-time
 
-```rust, editable
+```flux
 fn test_push_pop() {
     let mut vec = RVec::new();   // vec: RVec<i32>[0]
     vec.push(10);                // vec: RVec<i32>[1]
@@ -220,15 +222,15 @@ note: this is the condition that cannot be proved
    |                                        ^^^^^
 ```
 
-<!--
-We can use `push` to implement an `rvec!` macro for constructing vectors
-and then test that lengths are tracked correctly
+// <!--
+// We can use `push` to implement an `rvec!` macro for constructing vectors
+// and then test that lengths are tracked correctly
 
-<img src="../img/test_macro_pop.gif" width="100%"> -->
+// <img src="../img/test_macro_pop.gif" width="100%"> -->
 
 <!-- SLIDE -->
 
-### Querying the Size
+=== Querying the Size
 
 Perhaps we should _peek_ at the size of the vector
 to make sure its not empty _before_ we `pop` it.
@@ -237,7 +239,7 @@ We can do that by writing a `len` method that returns
 a `usize` corresponding to (and hence, by indexed by)
 the size of the input vector
 
-```rust, editable
+```flux
 #[flux_rs::trusted]
 impl<T> RVec<T> {
     #[spec(fn(&RVec<T>[@vec]) -> usize)]
@@ -253,7 +255,7 @@ verifies, i.e. so that flux "knows" that
 - after two `push`es, the value returned by `.len()` is exactly `2`, and
 - after two `pop`s the size is `0` again.
 
-```rust, editable
+```flux
 fn test_len() {
     let mut vec = RVec::new();
     vec.push(10);
@@ -267,7 +269,7 @@ fn test_len() {
 
 <!-- SLIDE -->
 
-## Random Access
+== Random Access
 
 Of course, vectors are not just _stacks_, they also allow
 _random_ access to their elements which is where those
@@ -278,7 +280,7 @@ Now that we're tracking sizes, we can _require_
 that the method to `get` an element only be called
 with a _valid index_ less than the vector's size
 
-```rust, editable
+```flux
 impl<T> RVec<T> {
     #[spec(fn(&RVec<T>[@n], i: usize{i < n}) -> &T)]
     pub fn get(&self, i: usize) -> &T {
@@ -294,13 +296,13 @@ impl<T> RVec<T> {
 
 <!-- SLIDE -->
 
-### Summing the Elements of an `RVec`
+=== Summing the Elements of an `RVec`
 
 **EXERCISE** Can you spot and fix the _off-by-one_ error
 in the code below which loops over the elements
 of an `RVec` and sums them up? [^1]
 
-```rust, editable
+```flux
 fn sum_vec(vec: &RVec<i32>) -> i32 {
     let mut res = 0;
     let mut i = 0;
@@ -314,7 +316,7 @@ fn sum_vec(vec: &RVec<i32>) -> i32 {
 
 <!-- SLIDE -->
 
-### Using the `Index` trait
+=== Using the `Index` trait
 
 Its a bit of an eyesore to to use `get` and `get_mut` directly.
 
@@ -322,7 +324,7 @@ Instead lets implement the `Index` and `IndexMut`
 traits for `RVec` which allows us to use the `[..]`
 operator to access elements
 
-```rust, editable
+```flux
 impl<T> std::ops::Index<usize> for RVec<T> {
     type Output = T;
     #[spec(fn(&RVec<T>[@n], i:usize{i < n}) -> &T)]
@@ -341,11 +343,11 @@ impl<T> std::ops::IndexMut<usize> for RVec<T> {
 
 <!-- SLIDE -->
 
-### Summing Nicely
+=== Summing Nicely
 
 Now the above `vec_sum` example looks a little nicer
 
-```rust, editable
+```flux
 fn sum_vec_fixed(vec: &RVec<i32>) -> i32 {
     let mut res = 0;
     let mut i = 0;
@@ -359,12 +361,12 @@ fn sum_vec_fixed(vec: &RVec<i32>) -> i32 {
 
 <!-- SLIDE -->
 
-## Memoization
+== Memoization
 
 Lets put the whole API to work in this "memoized" version of the fibonacci
 function which uses a vector to store the results of previous calls
 
-```rust, editable
+```flux
 pub fn fib(n: usize) -> i32 {
     let mut r = RVec::new();
     let mut i = 0;
@@ -397,20 +399,20 @@ error[FLUX]: precondition might not hold
    |     ^^^^^^^
 ```
 
-<!-- Indeed, we missed a "corner" case -- when `n` is `0` we skip the loop and
-so the vector is empty! Once we add a test for that, flux is happy.
+// <!-- Indeed, we missed a "corner" case -- when `n` is `0` we skip the loop and
+// so the vector is empty! Once we add a test for that, flux is happy.
 
-<img src="../img/fib.gif" width="100%"> -->
+// <img src="../img/fib.gif" width="100%"> -->
 
 <!-- SLIDE -->
 
-## Binary Search
+== Binary Search
 
 As a last example, lets look at a simplified version of the
 [`binary_search` method from `std::vec`][bsearch], into which
 we've snuck a tiny little bug
 
-```rust, editable
+```flux
 pub fn binary_search(vec: &RVec<i32>, x: i32) -> Result<usize, usize> {
     let mut size = vec.len();
     let mut left = 0;
@@ -460,7 +462,7 @@ error[FLUX]: arithmetic operation may overflow
 
 **EXERCISE** Can you the spot off-by-one and figure out a fix?
 
-## Summary
+== Summary
 
 Well then. We just saw how Flux's index and constraint
 mechanisms combine with Rust's ownership to let us write

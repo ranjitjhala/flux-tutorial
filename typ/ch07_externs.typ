@@ -1,6 +1,6 @@
-# Extern Specifications
+= Extern Specifications
 
-```rust, editable
+```fluxhidden
 #![feature(allocator_api)]
 #![allow(unused)]
 extern crate flux_rs;
@@ -9,7 +9,7 @@ use std::alloc::{Allocator, Global};
 use std::mem::swap;
 ```
 
-```rust, editable, hidden
+```fluxhidden
 #[spec(fn (bool[true]))]
 fn assert(b: bool) {
     if !b {
@@ -42,12 +42,12 @@ In this chapter, we'll look at the first three,
 and then we'll see how the idea [extends to traits
 and their implementations](./08-traits.md).
 
-## Extern Specs for Functions
+== Extern Specs for Functions
 
 As a first example, lets see how to write an extern spec for
 the function `std::mem::swap`.
 
-### Using Extern Functions
+=== Using Extern Functions
 
 Lets write a little test that creates to references and swaps them
 
@@ -66,7 +66,7 @@ the two `assert`s. The little red squiggles indicate it does not know that
 after the `swap` the values of `x` and `y` are swapped to `10` and `5`, as,
 well, it has no idea about how `swap` behaves!
 
-### Writing Extern Specs
+=== Writing Extern Specs
 
 We can fill this gap in flux's understanding by providing
 an **extern-spec**  that gives flux a refined type
@@ -87,7 +87,7 @@ the types referred to by `x` and `y` are "swapped".
 Now, if you uncomment and push play, flux will verify `test_swap` as
 it knows that at the call-site, `vx` and `vy` are respectively `5` and `10`.
 
-### Features of Extern Spec Functions
+=== Features of Extern Spec Functions
 
 Note two things about the `extern_spec` specification.
 
@@ -98,7 +98,7 @@ as that is going to be taken from `std::mem`. Instead, we're just telling
 flux to use the (uncommented) type specification when checking clients.
 
 
-### Getting the Length of a Slice
+=== Getting the Length of a Slice <ch:07_externs:getting-the-length-of-a-slice>
 
 Here is a function below that returns the `first` (well, `0`th)
 element of a slice of `u32`s.
@@ -118,10 +118,10 @@ fn first(slice: &[u32]) -> Option<u32> {
 so, cannot verify that the access `slice[0]` is safe! Can you help
 it by *fixing* the `extern_spec` for the method shown below?
 You might want to refresh your memory about the meaning of
-`&[T][@n]` by quickly skimming the previous chapter on the [sizes of arrays
-and slices](./06-consts.html#refined-compile-time-safety).
+`&[T][@n]` by quickly skimming @ch:06_consts:refined-compile-time-safety
+on the sizes of arrays and slices.
 
-```rust, editable
+```flux
 #[extern_spec]
 impl<T> [T] {
     #[spec(fn(&[T][@n]) -> usize)]
@@ -129,14 +129,15 @@ impl<T> [T] {
 }
 ```
 
-## Extern Specs for Enums: `Option`
+== Extern Specs for Enums: `Option`
 
 In the [chapter on enums](./04-enums.html) we saw how you can
 refine `enum` types with extra indices that track extra information
 about the underlying value. For example, we saw how to implement
-a [refined Option](./04-enums.html#a-refined-option) that is indexed
-by a boolean that tracks whether the value is `Some` (and hence, safe
-to `unwrap`)or `None`.
+a refined Option in @ch:04_enums:refined-option, that is indexed
+by a boolean that tracks whether the value is either
+- `Some` and hence, safe to `unwrap`, or
+- `None`, which cannot be `unwrap`ped.
 
 The `extern_spec` mechanism lets us do the same thing, but directly on
 `std::option::Option`. To do so we need only
@@ -146,7 +147,7 @@ The `extern_spec` mechanism lets us do the same thing, but directly on
 2. write extern-specs for the **method signatures** that let us use the
    indices to describe a refined API that is used to check client code.
 
-### Extern Specs for the Type Definition
+=== Extern Specs for the Type Definition
 
 First, lets add the `bool` index to the `Option` type definition.
 
@@ -163,10 +164,10 @@ enum Option<T> {
 
 As you might have noticed, this bit is *identical*
 to the refined version of `Option` that we saw in
-the [chapter on enums](./04-enums.html#a-refined-option),
-except for the `#[extern_spec]` topping.
+@ch:04_enums:refined-option, except for the
+`#[extern_spec]` topping.
 
-### Using the Type Definition
+=== Using the Type Definition
 
 Adding the above "retrofits" the `bool` index directly
 into the `std::option::Option` type. So, for example
@@ -188,13 +189,13 @@ fn test_none() -> Option<i32> {
 you can drop it, and just write `Option<i32>[true]`
 or `Option<i32>[false]`.
 
-### Extern Specs for Impl Methods
+=== Extern Specs for Impl Methods
 
 The extern specs become especially useful when we use them to refine
 the methods that `impl`ement various key operations on `Option`s.
 
 To do so, we can make an `extern_spec` `impl` for `Option`, much like
-we did for slices, [back here](#getting-the-length-of-a-slice).
+we did for slices, back in @ch:07_externs:getting-the-length-of-a-slice.
 
 ```rust,editable
 #[extern_spec]
@@ -221,7 +222,7 @@ Notice that the spec for
 - `is_some` returns `true` if the input `Option` was indeed `valid`, i.e. was a `Some(..)`;
 - `is_none` returns `true` if the input `Option` was *not* `valid`, i.e. was a `None`.
 
-### Using Extern Method Specifications
+=== Using Extern Method Specifications
 
 We can test these new specifications out in our client code.
 
@@ -234,7 +235,7 @@ fn test_opt_specs(){
 }
 ```
 
-### Safely Unwrapping
+=== Safely Unwrapping
 
 Of course, we all know that we _shouldn't_ directly use `unwrap`.
 However, sometimes, its ok, if we somehow *know* that the value
@@ -267,7 +268,7 @@ return *any* `Option<i32>`, including those that might
 well blow up `unwrap`. Can you fix the `spec` for `into_u8`
 so that flux verifies `test_unwrap`?
 
-### A Safe Division Function
+=== A Safe Division Function
 
 Lets write a safe-division function, that checks if the divisor
 is non-zero before doing the division.
@@ -296,7 +297,7 @@ pub fn test_safe_div() {
 ```
 
 
-## Extern Specs for Structs: `Vec`
+== Extern Specs for Structs: `Vec`
 
 Previously, we saw how to define a *new* type `RVec<T>`
 for [refined vectors](./05-vectors.html) and to write
@@ -306,7 +307,7 @@ Next, lets see how we can use `extern_spec` to implement
 (most of) the refined API directly on structs like
 `std::vec::Vec` which are defined in external crates.
 
-### Extern Specs for the Type Definition
+=== Extern Specs for the Type Definition
 
 As with `enum`s we start by sprinkling refinement
 indices on the `struct` definition. Since we want
@@ -319,13 +320,13 @@ to track sizes, lets write
 struct Vec<T, A: Allocator = Global>;
 ```
 
-### Extern Invariants
+=== Extern Invariants
 
 Note that we can additionally attach **invariants** to the `struct`
 definition, which correspond to facts that are _always_ true about
 the indices, for example, that the `len` of a `Vec` is always non-negative.
 
-### Extern `struct`s are Opaque
+=== Extern `struct`s are Opaque
 
 Unlike with `enum`, the `extern_spec` is oblivious
 to the _internals_ of the `struct`. That is flux
@@ -352,7 +353,7 @@ fn test_new() -> Vec<i32> {
 }
 ```
 
-### Extern Specs for Impl Methods
+=== Extern Specs for Impl Methods
 
 Lets beef up our refined `Vec` API with a few more methods
 like `push`, `pop`, `len` and so on.
@@ -368,7 +369,7 @@ As it happens, `push` and `pop` are defined in a *separate*
 `impl` block, parameterized by a generic `A: Allocator`, so
 our `extern_spec` mirrors this block:
 
-```rust, editable
+```flux
 #[extern_spec]
 impl<T, A: Allocator> Vec<T, A> {
     #[spec(fn(self: &mut Vec<T, A>[@n], T)
@@ -387,11 +388,11 @@ impl<T, A: Allocator> Vec<T, A> {
 }
 ```
 
-### Constructing Vectors
+=== Constructing Vectors
 
 Lets take the refined `vec` API out for a spin.
 
-```rust, editable
+```flux
 #[spec(fn() -> Vec<i32>[3])]
 pub fn test_push() -> Vec<i32> {
     let mut res = Vec::new();   // res: Vec<i32>[0]
@@ -404,18 +405,20 @@ pub fn test_push() -> Vec<i32> {
 ```
 
 Flux uses the refinements to type `res` as a 0-sized `Vec<i32>[0]`.
-Each subsequent `push` [updates the reference's type](./02-ownership.html#borrowing-updatable-references)
+Each subsequent `push` updates the reference's type
+(as described in @ch:02_ownership:strongly-mutable-references)
 by increasing the size by one.
+//
 Finally, the `len` returns the size at that point, `3`, thereby
 proving the assert.
 
 
-### Testing Emptiness
+=== Testing Emptiness
 
 **EXERCISE** Can you fix the spec for `is_empty` above so that the
 two assertions below are verified?
 
-```rust, editable
+```flux
 fn test_is_empty() {
    let v0 = test_new();
    assert(v0.is_empty());
@@ -425,7 +428,7 @@ fn test_is_empty() {
 }
 ```
 
-### The Refined `vec!` Macro
+=== The Refined `vec!` Macro
 
 The ubiquitous `vec!` macro internally allocates a slice
 and then calls `into_vec` to create a `Vec`.
@@ -443,7 +446,7 @@ impl<T> [T] {
 **EXERCISE** Can you fix the `extern_spec` for `into_vec` so that
 the code below verifies?
 
-```rust, editable
+```flux
 #[spec(fn() -> Vec<i32>[3])]
 pub fn test_push_macro() -> Vec<i32> {
     let res = vec![10, 20, 30];
@@ -452,7 +455,7 @@ pub fn test_push_macro() -> Vec<i32> {
 }
 ```
 
-### Pop-and-Unwrap
+=== Pop-and-Unwrap
 
 Suppose we wanted to write a function that popped the last element
 of a non-empty vector.
@@ -471,7 +474,7 @@ above does not tell us _when_ the returned value is safe to unwrap.
 Can you go back and fix the spec for `fn pop` so that `pop_and_unwrap`
 verifies?
 
-### PopPop!
+=== PopPop!
 
 **EXERCISE** Finally, as a parting exercise, can you work out
 why flux rejects the `pop2` function below, and modify the spec
@@ -487,7 +490,7 @@ fn pop2<T>(vec: &mut Vec<T>) -> (T, T)  {
 }
 ```
 
-## Summary
+== Summary
 
 Previously, we saw how to attach refined specifications for
 [functions](./01-refinements.html), [structs](03-structs.html)

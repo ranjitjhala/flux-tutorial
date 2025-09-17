@@ -15,7 +15,8 @@ convertCodeBlocks = unlines . map convertLine . lines
   where
     convertLine :: String -> String
     convertLine s
-      | "``` flux" `isPrefixOf` s = "```rust, editable"
+      | "``` fluxhidden" `isPrefixOf` s = "```rust, editable, hidden"
+      | "``` flux"       `isPrefixOf` s = "```rust, editable"
       | otherwise = s
 
 convertWord :: String -> String

@@ -1,4 +1,4 @@
-# Const Generics
+= Const Generics
 
 [Online demo](https://flux.goto.ucsd.edu/index.html#?demo=arrays.rs)
 
@@ -18,7 +18,7 @@ let pix0: Pixel = [255,   0, 127];
 let pix1: Pixel = [  0, 255, 127];
 ```
 
-## Compile-time Safety...
+== Compile-time Safety...
 
 As the size of the array is known at compile time, Rust can make sure that
 we don't _create_ arrays of the wrong size, or _access_ them out of bounds.
@@ -42,7 +42,7 @@ Similarly, `rustc` will wag a finger if you try to access a `Pixel` at an invali
    |
 ```
 
-## ... Run-time Panic!
+== ... Run-time Panic!
 
 However, the plain type system works only upto a point. For example, consider the
 following function to compute the average `color` value of a collection of `&[Pixel]`
@@ -75,7 +75,7 @@ panics at runtime:
 thread 'main' panicked ... index out of bounds: the len is 3 but the index is 3
 ```
 
-## Refined Compile-time Safety
+== Refined Compile-time Safety
 
 Fortunately, `flux` knows about the sizes of arrays and slices. At compile time,
 `flux` warns about two possible errors in `average_color`
@@ -96,7 +96,7 @@ We can fix these errors by requiring that the input
 
 <img src="../img/04-arrays-average-fix.gif" width="100%">
 
-## Const Generics
+== Const Generics
 
 Rust also lets us write arrays that are _generic_ over the size. For example,
 suppose we want to take two input arrays `x` and `y` of the same size `N` and
@@ -144,7 +144,7 @@ thread 'main' panicked at ... index out of bounds: the len is 2 but the index is
 
 Yikes.
 
-## Refined Const Generics
+== Refined Const Generics
 
 Fortunately, `flux` understands const-generics as well!
 
@@ -189,7 +189,7 @@ Do you understand why
 (1) Adding the type signature moved the error from the body of `dot_k` into the call-site inside `test`?
 (2) Then editing `test` to call `dot_k` with `k=2` fixed the error?
 
-## Summary
+== Summary
 
 Rust's (sized) arrays are great, and `flux`'s refinements make them even better,
 by ensuring indices are guaranteed to be within the arrays bounds. Const generics

@@ -1,6 +1,6 @@
-# Refining Structs
+= Refining Structs <ch:03_structs>
 
-```rust, editable, hidden
+```fluxhidden
 #![allow(unused)]
 extern crate flux_rs;
 use flux_rs::attrs::*;
@@ -24,7 +24,7 @@ so we can precisely define the set of _legal_ values of those types.
 
 <!-- SLIDE -->
 
-## Positive Integers
+== Positive Integers <ch:03_structs:positive-integers>
 
 Lets start with an example posted on the [flux gitHub](https://github.com/flux-rs/flux/issues/1106):
 
@@ -32,7 +32,7 @@ Lets start with an example posted on the [flux gitHub](https://github.com/flux-r
 
 With flux, you can define the `Positivei32` type as follows:
 
-```rust, editable
+```flux
 #[refined_by(n: int)]
 #[invariant(n > 0)]
 struct Positivei32 {
@@ -54,11 +54,11 @@ the flux refinements say _three_ distinct things.
 
 <!-- SLIDE -->
 
-### Creating Positive Integers
+=== Creating Positive Integers
 
 Now, you would create a `Positivei32` pretty much as you might in Rust:
 
-```rust, editable
+```flux
 #[spec(fn() -> Positivei32)]
 fn mk_positive_1() -> Positivei32 {
   Positivei32 { val: 1 }
@@ -67,7 +67,7 @@ fn mk_positive_1() -> Positivei32 {
 
 and flux will prevent you from creating an _illegal_ `Positivei32`, like
 
-```rust, editable
+```flux
 #[spec(fn() -> Positivei32)]
 fn mk_positive_0() -> Positivei32 {
   Positivei32 { val: 0 }
@@ -76,12 +76,12 @@ fn mk_positive_0() -> Positivei32 {
 
 <!-- SLIDE -->
 
-### A Constructor
+=== A Constructor
 
 **EXERCISE** Consider the following `new` constructor for `Positivei32`. Why does flux reject it?
 Can you figure out how to fix the `spec` for the constructor so flux will be appeased?
 
-```rust, editable
+```flux
 impl Positivei32 {
   pub fn new(val: i32) -> Self {
     Positivei32 { val }
@@ -91,13 +91,13 @@ impl Positivei32 {
 
 <!-- SLIDE -->
 
-### A "Smart" Constructor
+=== A "Smart" Constructor
 
 **EXERCISE** Here is a different, constructor that should work
 for _any_ input `n` but which may return `None` if the input is
 invalid. Can you fix the code so that flux accepts `new_opt`?
 
-```rust, editable
+```flux
 impl Positivei32 {
   pub fn new_opt(val: i32) -> Option<Self> {
       Some(Positivei32 { val })
@@ -107,13 +107,13 @@ impl Positivei32 {
 
 <!-- SLIDE -->
 
-### Tracking the Field Value
+=== Tracking the Field Value
 
 In addition to letting us constrain the underlying `i32` to be positive,
 the `n: int` index lets flux precisely _track_ the value of the `Positivei32`.
 For example, we can say that the following function returns a very specific `Positivei32`:
 
-```rust, editable
+```flux
 #[spec(fn() -> Positivei32[{n:10}])]
 fn mk_positive_10() -> Positivei32 {
   Positivei32 { val: 10 }
@@ -125,7 +125,7 @@ fn mk_positive_10() -> Positivei32 {
 Since the field `val` corresponds to the _tracked index_,
 flux "knows" what `val` is from the index, and hence lets us check that
 
-```rust, editable
+```flux
 #[spec(fn() -> i32[10])]
 fn test_ten() -> i32 {
     let p = mk_positive_10(); // p   : Positivei32[{n: 10}]
@@ -136,15 +136,16 @@ fn test_ten() -> i32 {
 
 <!-- SLIDE -->
 
-### Tracking the Value in the Constructor
+=== Tracking the Value in the Constructor
 
 **EXERCISE** Scroll back up, and modify the `spec` for `new`
 so that the below code verifies. That is, modify the `spec`
 so that it says what the value of `val` is when `new` returns
 a `Positivei32`. You will likely need to _combine_ indexes
-and constraints as shown in [the example `add_points`](./01-refinements.md#combining-indexes-and-constraints).
+and constraints as shown in the example `add_points` in
+@ch:01_refinements:combining-indexes-and-constraints.
 
-```rust, editable
+```flux
 #[spec(fn() -> i32[99])]
 fn test_new() -> i32 {
     let p = Positivei32::new(99);
@@ -155,7 +156,7 @@ fn test_new() -> i32 {
 
 <!-- SLIDE -->
 
-### Field vs. Index?
+=== Field vs. Index?
 
 At this point, you might be wondering why, since `n` is the value of the field `val`,
 we didn't just name the index `val` instead of `n`?
@@ -168,14 +169,14 @@ _type-level property_ that only lives at compile-time.
 
 <!-- SLIDE -->
 
-## Integers in a Range
+== Integers in a Range
 
 Of course, once we can index and constrain a single field, we can do so for many fields.
 
 For instance, suppose we wanted to write a `Range` type with two fields `start` and `end`
 which are integers such that `start <= end`. We might do so as
 
-```rust, editable
+```flux
 #[refined_by(start: int, end: int)]
 #[invariant(start <= end)]
 struct Range {
@@ -191,11 +192,11 @@ names (even though they are conceptually distinct things).
 
 <!-- SLIDE -->
 
-### Legal Ranges
+=== Legal Ranges
 
 Again, the refined `struct` specification will ensure we only create legal `Range` values.
 
-```rust, editable
+```flux
 fn test_range() {
     vec![
         Range { start: 0, end: 10 }, // ok
@@ -206,15 +207,16 @@ fn test_range() {
 
 <!-- SLIDE -->
 
-### A Range Constructor
+=== A Range Constructor
 
 **EXERCISE** Fix the specification of the `new`
 constructor for `Range` so that both `new` and
 `test_range_new` are accepted by flux. (Again,
 you will need to _combine_ indexes and constraints
-as shown in [the example `add_points`](./01-refinements.md#combining-indexes-and-constraints).)
+as shown in the example `add_points` shown
+in @ch:01_refinements:combining-indexes-and-constraints.
 
-```rust, editable
+```flux
 impl Range {
     pub fn new(start: i32, end: i32) -> Self {
         Range { start, end }
@@ -232,13 +234,13 @@ fn test_range_new() -> Range {
 
 <!-- SLIDE -->
 
-### Combining Ranges
+=== Combining Ranges
 
 Lets write a function that computes the _union_ of two ranges.
 For example, given the range from `10-20` and `15-25`, we might
 want to return the the union is `10-25`.
 
-```rust, editable
+```flux
 fn min(x:i32, y:i32) -> i32 {
   if x < y { x } else { y }
 }
@@ -259,14 +261,14 @@ so that flux will accept that `union` only constructs legal `Range` values?
 
 <!-- SLIDE -->
 
-## Refinement Functions
+== Refinement Functions
 
 When _code_ get's more complicated, we like to abstract it into reusable
 functions. Flux lets us do the same for refinements too. For example, we
 can define refinement-level functions `min` and `max` which take `int`
 (not `i32` or `usize` but logical `int`) as input and return that as output.
 
-```rust, editable
+```flux
 defs! {
     fn min(x: int, y: int) -> int {
         if x < y { x } else { y }
@@ -280,7 +282,7 @@ defs! {
 We can now use refinement functions like `min` and `max` inside types.
 For example, the output type of `decr` precisely tracks the decremented value.
 
-```rust, editable
+```flux
 impl Positivei32 {
   #[spec(fn(&Self[@p]) -> Self[max(1, p.n - 1)])]
   fn decr(&self) -> Self {
@@ -301,14 +303,14 @@ fn test_decr() {
 
 <!-- SLIDE -->
 
-### Combining Ranges, Precisely
+=== Combining Ranges, Precisely
 
 **EXERCISE** The `union` function that we wrote
 above says _some_ `Range` is returned, but nothing
 about _what_ that range actually is! Fix the `spec`
 for `union` below, so that flux accepts `test_union` below.
 
-```rust, editable
+```flux
 impl Range {
   #[spec(fn(&Self[@r1], &Self[@r2]) -> Self)]
   pub fn union(&self, other: &Range) -> Range {
@@ -335,7 +337,7 @@ fn test_union() {
 }
 ```
 
-## Summary
+== Summary
 
 To conclude, we saw how you can use flux to refine user-defined `struct` to track,
 at the type-level, the values of fields, and to then constrain the sets of _legal_

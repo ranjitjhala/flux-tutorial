@@ -2,7 +2,7 @@
 
 = Ownership in Flux
 
-```flux
+```fluxhidden
 #![allow(unused)]
 extern crate flux_rs;
 use flux_rs::attrs::*;
@@ -16,7 +16,7 @@ For instance, we wrote an `assert` function which can
 _only_ be called with `true` so if the code typechecks,
 we know that the assertion _cannot_ fail at runtime.
 
-```flux
+```fluxhidden
 #[spec(fn (bool[true]))]
 fn assert(b: bool) {
     if !b {
@@ -290,7 +290,7 @@ To verify `test_incr`, we need a signature for `incr` that says
 that its _output_ is indeed one greater than its input#footnote[Setting aside
 the issue of overflows for now...].
 
-== Strongly Mutable References
+== Strongly Mutable References <ch:02_ownership:strongly-mutable-references>
 
 
 #alert("info", [

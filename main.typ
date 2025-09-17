@@ -76,6 +76,19 @@
   raw(it.text, lang: "rust", block: it.block)
 }
 
+// Render flux blocks also as rust
+#show raw.where(lang: "flux"): it => {
+  set text(size: 1.2em)
+  raw(it.text, lang: "rust", block: it.block)
+}
+
+// Hide fluxhidden blocks completely
+#show raw.where(lang: "fluxhidden"): it => {
+  // Return nothing to hide the block completely
+  []
+}
+
+
 // Add 1em vertical space after level 1 headings (chapters)
 #show heading.where(level: 1 ): it => {
   set text(font: "Liberation Serif", size: 1em, weight: "bold")
@@ -101,6 +114,13 @@ Fixing a hole where the rain gets in.
 
 #include("typ/ch01_refinements.typ")
 #include("typ/ch02_ownership.typ")
+#include("typ/ch03_structs.typ")
+#include("typ/ch04_enums.typ")
+#include("typ/ch05_vectors.typ")
+#include("typ/ch06_consts.typ")
+#include("typ/ch07_externs.typ")
+#include("typ/ch08_traits.typ")
+
 
 // = Random Junk
 

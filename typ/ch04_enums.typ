@@ -1,6 +1,6 @@
-# Refining Enums
+= Refining Enums
 
-```rust, editable, hidden
+```fluxhidden
 #![allow(unused)]
 extern crate flux_rs;
 use flux_rs::attrs::*;
@@ -20,7 +20,7 @@ can be profitably used to let us check properties of `enums` at compile time.
 
 <!-- SLIDE -->
 
-## Failure is an Option
+== Failure is an Option
 
 Rust's type system is really terrific for spotting all
 manner of bugs at compile time. However, that just makes
@@ -35,13 +35,13 @@ let us `unwrap` without the anxiety of run-time failure.
 
 <!-- SLIDE -->
 
-### A Refined Option
+=== A Refined Option
 
 To do so, lets define a custom `Option` type [^1] that
 is indexed by a `bool` which indicates whether or not
 the option is valid (i.e. `Some` or `None`):
 
-```rust, editable
+```flux
 #[refined_by(valid: bool)]
 enum Option<T> {
     #[variant((T) -> Option<T>[{valid: true}])]
@@ -63,7 +63,7 @@ However, we have tricked out the type in two ways.
 
 <!-- SLIDE -->
 
-### Constructing Options
+=== Constructing Options
 
 The definition above tells flux that `Some(...)`
 has the refined type `Option<...>[{valid: true}]`,
@@ -72,7 +72,7 @@ and `None` has the refined type `Option<...>[{valid: false}]`.
 **NOTE** When there is a _single_ refinement index, we can skip the `{valid:b}`
 and just write `b`.
 
-```rust, editable
+```flux
 #[spec(fn () -> Option<i32>[true])]
 fn test_some() -> Option<i32> {
   Option::Some(12)
@@ -86,14 +86,14 @@ fn test_none() -> Option<i32> {
 
 <!-- SLIDE -->
 
-### Destructing Options by Pattern Matching
+=== Destructing Options by Pattern Matching
 
 The neat thing about refining variants is that _pattern matching_
 on the `enum` tells flux what the variant's refinements are.
 
 For example, consider the following implementation of `is_some`
 
-```rust, editable
+```flux
 impl<T> Option<T> {
   #[spec(fn(&Self[@valid]) -> bool[valid])]
   pub fn is_some(&self) -> bool {
@@ -107,7 +107,7 @@ impl<T> Option<T> {
 
 <!-- SLIDE -->
 
-### Never Do This!
+=== Never Do This!
 
 When working with `Option` types, or more generally,
 with `enum`s, we often have situations in pattern-match
@@ -118,7 +118,7 @@ Typically we mark those cases with an `unreachable!()` call.
 With flux, we can do even more: we can _prove_, at compile-time,
 that those cases will never, in fact, be executed.
 
-```rust, editable
+```flux
 #[spec(fn () -> _ requires false)]
 fn unreachable() -> ! {
     assert(false);  // flux will prove this is unreachable
@@ -130,7 +130,7 @@ The _precondition_ `false` ensures that the _only_ way that
 a call to `unreachable` can be verified is when flux can prove
 that the call-site is "dead code".
 
-```rust, editable
+```flux
 fn test_unreachable(n: usize) {
   let x = 12;           // x : usize[12]
   let x = 12 + n;       // x : usize[12 + n] where 0 <= n
@@ -142,11 +142,11 @@ fn test_unreachable(n: usize) {
 
 <!-- SLIDE -->
 
-### Unwrap Without Anxiety!
+=== Unwrap Without Anxiety!
 
 Lets use our refined `Option` to implement a safe `unwrap` function.
 
-```rust, editable
+```flux
 impl <T> Option<T> {
   #[spec(fn(Self[true]) -> T)]
   pub fn unwrap(self) -> T {
@@ -172,18 +172,18 @@ Hence, flux concludes that pattern is dead code
 
 <!-- SLIDE -->
 
-## Using `unwrap`
+== Using `unwrap`
 
 Next, lets see some examples of how to use refined options
 to safely `unwrap`.
 
 <!-- SLIDE -->
 
-### Safe Division
+=== Safe Division
 
 Here's a safe divide-by-zero function that returns an `Option<i32>`:
 
-```rust, editable
+```flux
 #[spec(fn(n:i32, k:i32) -> Option<i32>)]
 pub fn safe_divide(n: i32, k: i32) -> Option<i32> {
   if k > 0 {
@@ -198,7 +198,7 @@ pub fn safe_divide(n: i32, k: i32) -> Option<i32> {
 Can you fix the `spec` for `safe_divide` so flux is happy
 with `test_safe_divide`?
 
-```rust, editable
+```flux
 fn test_safe_divide() -> i32 {
     safe_divide(10, 2).unwrap()
 }
@@ -206,12 +206,12 @@ fn test_safe_divide() -> i32 {
 
 <!-- SLIDE -->
 
-### Smart Constructors Revisited
+=== Smart Constructors Revisited
 
-Recall the [`struct Positivei32`](./03-structs.md#positive-integers)
+Recall the `struct Positivei32` from @ch:03_structs:positive-integers
 and the smart constructor we wrote for it.
 
-```rust, editable
+```flux
 #[refined_by(n: int)]
 #[invariant(n > 0)]
 struct Positivei32 {
@@ -238,7 +238,7 @@ the `spec` of `new` so that the `test_unwrap` figure
 out how to fix the `spec` of `new` so that `test_new_unwrap`
 is accepted?
 
-```rust, editable
+```flux
 fn test_new_unwrap() {
     Positivei32::new(10).unwrap();
 }
@@ -246,7 +246,7 @@ fn test_new_unwrap() {
 
 <!-- SLIDE -->
 
-## TypeStates: A Refined Timer
+== TypeStates: A Refined Timer
 
 Lets look a different way to use refined `enum`s.
 On the [flux zulip][zulip-timer] we were asked
@@ -261,12 +261,12 @@ be set to `Inactive` when `n < 1`.
 
 <!-- SLIDE -->
 
-### Refined Timers
+=== Refined Timers
 
 To do so, lets define the `Timer`, refined with an `int` index that tracks
 the number of remaining seconds.
 
-```rust, editable
+```flux
 #[flux::refined_by(remaining: int)]
 enum Timer {
     #[flux::variant(Timer[0])]
@@ -284,11 +284,11 @@ The flux definitions ensure that `Timer` has two variants
 
 <!-- SLIDE -->
 
-### Timer Implementation
+=== Timer Implementation
 
 We can now implement the `Timer` with a constructor and a method to set it to `Inactive`.
 
-```rust, editable
+```flux
 impl Timer {
     #[spec(fn (n: usize) -> Timer[n])]
     pub fn new(n: usize) -> Self {
@@ -304,7 +304,7 @@ impl Timer {
 
 <!-- SLIDE -->
 
-### Deactivate the Timer
+=== Deactivate the Timer
 
 Now, you can see that flux will only let us `set_inactive`
 a timer whose countdown is at `0`.
@@ -321,13 +321,13 @@ fn test_deactivate() {
 
 <!-- SLIDE -->
 
-### Ticking the Timer
+=== Ticking the Timer
 
 Here is a function to `tick` the timer down by one second.
 
 <!-- // #[spec(fn (self: &mut Self[@s]) ensures self: Self[if n > 1 then n-1 else 0])] -->
 
-```rust, editable
+```flux
 impl Timer {
   #[spec(fn (self: &mut Self[@s]) ensures self: Self)]
   fn tick(&mut self) {
@@ -346,7 +346,7 @@ impl Timer {
 
 **EXERCISE** Can you fix the `spec` for `tick` so that flux accepts the following test?
 
-```rust, editable
+```flux
 fn test_tick() {
   let mut t = Timer::new(3);
   t.tick();       // should decrement to 2
@@ -356,7 +356,7 @@ fn test_tick() {
 }
 ```
 
-## Summary
+== Summary
 
 In this chapter, we saw how you refine an `enum` with indices, and then specify
 the values of the indices for each `variant`. This let us, for example, determine

@@ -257,7 +257,7 @@ Further, `res` has type `i32[0 - n]`.
 
 // <!-- SLIDE -->
 
-== Combining Indexes & Constraints
+== Combining Indexes & Constraints <ch:01_refinements:combining-indexes-and-constraints>
 
 Sometimes, we want to _combine_ indexes and constraints in a specification.
 For example, suppose we have some code that manipulates
