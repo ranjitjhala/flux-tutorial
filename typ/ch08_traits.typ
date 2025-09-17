@@ -1,3 +1,5 @@
+#import "../orly-modified.typ": alert
+
 = Traits and Associated Refinements
 
 ```fluxhidden
@@ -18,9 +20,9 @@ fn assert(b: bool) {
 }
 ```
 
-One of Rust's most appealing features is its **trait** system which lets us decouple
-**descriptions** of particular operations that a type should support, from their actual
-**implementations**, to enable *generic* code that works across all implementations of
+One of Rust's most appealing features is its `trait` system which lets us decouple
+_descriptions_ of particular operations that a type should support, from their actual
+_implementations_, to enable generic code that works across all implementations of
 an interface.
 
 Traits are ubiquitous in Rust code. For example,
@@ -42,7 +44,7 @@ Traits are ubiquitous in Rust code. For example,
 
 In this chapter, lets learn how traits pose some interesting
 puzzles for formal verification, and how Flux resolves these
-challenges with **associated refinements**.
+challenges with *associated refinements*.
 
 == First things First
 
@@ -96,9 +98,11 @@ error[E0999]: assertion might fail: possible out of bounds access
 
 === Specifying Non-Empty Slices
 
-**EXERCISE:** Can you go back and add a flux `spec` for `get_first_slice` that says that the function
+#alert("success", [
+*EXERCISE:* Can you go back and add a flux `spec` for `get_first_slice` that says that the function
 should  _only_ be called with _non-empty_ slices? The spec should look something like the below, except
 the `...` should be a constraint over `size`.
+])
 
 ```
 #[spec(fn (container: &[A]{size: ...}) -> &A)]
@@ -230,7 +234,7 @@ of the container, and will crash at run-time if the `0`th element
 does not exist, as is the case with an empty slice.
 
 But the puzzle is this: how do we specify
-**"the `0`-th element exists"** for _any_
+*"the `0`-th element exists"* for _any_
 generic `container` that implements `Index`?
 
 == Associated Refinements
@@ -246,11 +250,11 @@ pub trait IndexV1<Idx> {
 }
 ```
 
-In the above, `Output` is an **associated type** for the `Index` trait that
+In the above, `Output` is an *associated type* for the `Index` trait that
 specifies what the `index` method returns. For instance, in our implementation
 of `Index<usize>` for slices `[A]`, the `Output` is `A`.
 Inspired this idea, Flux extends traits with the ability to specify
-**associated refinements** that can _describe_ the values accepted
+*associated refinements* that can _describe_ the values accepted
 and returned by the trait's methods.
 
 === Valid Indexes
@@ -271,15 +275,15 @@ pub trait Index<Idx:?Sized> {
 
 There are _two_ new things in our new version of `Index`.
 
-**1. Declaration**
+*1. Declaration*
 First, the `reft` attribute declares[^2] the _associated refinement_:
 a refinement level function named `valid`, that
 
-- _takes_ as inputs, the `Self` type of the container and the `Idx` type of the index, and
+- _takes_ as inputs, the `Self` type of the container and the `Idx` type of the index,
 - _returns_ a `bool` which indicates if the `index` is valid for the container.
 
 
-**2. Use**
+*2. Use*
 Next, the `spec` attribute refines the `index` method to say that it should only be
 passed an `idx` that is *valid* for the `me` container, where `valid` is the associated
 refinement declared above. The notation `<Self as Index<Idx>>::valid(me, idx)` is a
@@ -326,7 +330,7 @@ impl <A> Index<usize> for [A] {
 
 As with the trait definition, there are two new things in our implementation of `Index` for slices.
 
-**1. Implementation**
+*1. Implementation*
 First, we provide a concrete implementation of the _associated refinement_ `valid`.
 Recall that in flux, slices `[A]` are represented by their size (as described in
 @ch:06_consts:refined-compile-time-safety) at the refinement level.
@@ -334,7 +338,7 @@ Hence, the implementation of `valid` takes as parameters the `size`
 of the slice and the `index`, and returns `true` exactly if
 the `index` is less than the `size`.
 
-**2. Use**
+*2. Use*
 As with the trait method, the actual implementation of the `index`
 method has been refined to say that it should only be passed an
 `idx` that is *valid* for `me` at the specified `idx`.[^3]
@@ -390,12 +394,12 @@ impl Index<Range<usize>> for str  {
 
 The implementation above, implements `Index<Range<usize>>` for `str` by
 
-1. **Defining** the associated refinement `valid` to say that a `Range` is valid for a string
+1. *Defining* the associated refinement `valid` to say that a `Range` is valid for a string
    if the `start` of the range is less than or equal to the `end`, and the `end` is
    less than or equal to the length of the string (which we get using the built-in
    `str_len` function);
 
-2. **Refining** the specification of the `index` method to say that it should only be
+2. *Refining* the specification of the `index` method to say that it should only be
    passed an `index` that is valid for the string `me`; and the given `idx`.
 
 Now when we run flux on clients of this implementation,
@@ -424,14 +428,18 @@ note: this is the condition that cannot be proved
    |                                 ^^^^^^^^^^^^^^^^^^^^^^^^
 ```
 
-**EXERCISE:** Can you modify the code above so that the second call to `index`
+#alert("success", [
+*EXERCISE:* Can you modify the code above so that the second call to `index`
 is accepted by flux?
+])
 
 == Indexing Vectors with `usize`
 
-**EXERCISE:** Let's implement the `Index` trait for `Vec` using `usize` indexes.
+#alert("success", [
+*EXERCISE:* Lets implement the `Index` trait for `Vec` using `usize` indexes.
 The definition of `valid` is too permissive, can you modify it so that flux accepts
 the below `impl`?
+])
 
 
 ```flux
@@ -446,9 +454,11 @@ impl <A:Copy> Index<usize> for Vec<A> {
 }
 ```
 
-**EXERCISE:** Let's write a client that uses the `index` on `Vec`
+#alert("success", [
+*EXERCISE:* Let's write a client that uses the `index` on `Vec`
 to compute a dot-product for two `Vec<f64>`. Can you fix the `spec`
 for `dot_vec` so flux accepts it?
+])
 
 ```flux
 #[spec(fn (xs: &Vec<f64>, ys: &Vec<f64>) -> f64)]
@@ -463,8 +473,10 @@ fn dot_vec(xs: &Vec<f64>, ys: &Vec<f64>) -> f64 {
 
 == Indexing Vectors with Ranges
 
-**EXERCISE:** Finally, lets extract _sub-slices_ from vectors using `Range<usize>` indexes.
+#alert("success", [
+*EXERCISE:* Finally, lets extract _sub-slices_ from vectors using `Range<usize>` indexes.
 Why does flux reject the below `impl`? Can you edit the code so flux accepts it?
+])
 
 ```flux
 #[assoc(fn valid(me: Vec, idx: Range<int>) -> bool {
@@ -483,7 +495,7 @@ impl <A> Index<Range<usize>> for Vec<A> {
 
 == Conclusion
 
-In this chapter, we saw how traits can be extended with **associated refinements**
+In this chapter, we saw how traits can be extended with *associated refinements*
 which let us _declare_ refinements on the inputs and outputs of trait methods
 (e.g. `valid` indexes) that are then _implemented_  by each implementation of
 the trait (e.g. the index is less than the slice size).

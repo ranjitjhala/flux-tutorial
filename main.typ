@@ -156,5 +156,5 @@ Fixing a hole where the rain gets in.
 #include("typ/ch04_enums.typ")
 #include("typ/ch05_vectors.typ")
 #include("typ/ch06_consts.typ")
-// #include("typ/ch07_externs.typ")
-// #include("typ/ch08_traits.typ")
+#include("typ/ch07_externs.typ")
+#include("typ/ch08_traits.typ")
