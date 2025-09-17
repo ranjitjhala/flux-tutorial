@@ -14,18 +14,19 @@ md-files: $(MD_FILES)
 md/tutorial/%.md: typ/%.typ
 	@mkdir -p md/tutorial
 	pandoc $< -t gfm -o $@
-	@./scripts/markdown.sh $@
+	@./scripts/markdown.hs $@
+	@mv $@.out $@
 	cp -r img/* md/img/
 
 rs-files: $(RS_FILES)
 
 src/%.rs: typ/%.typ
 	@mkdir -p src
-	@./scripts/rust.sh $< > $@
+	@./scripts/rust.hs $< > $@
 
 clean:
 	rm -f main.pdf
-	rm -rf md/tutorial/*.md
+	rm -rf md/tutorial/*
 	rm -rf src/ch*.rs
 
 .PHONY: md-files
