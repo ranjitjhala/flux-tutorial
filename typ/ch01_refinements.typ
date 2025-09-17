@@ -1,6 +1,6 @@
-#import "orly-modified.typ": alert
+#import "../orly-modified.typ": alert
 
-= Refining Types <ch:01>
+= Refining Types <ch:01_refinements>
 
 Types bring order to code. For example, if a variable `i` has
 type `usize` then we know that `i` is a number that can be used

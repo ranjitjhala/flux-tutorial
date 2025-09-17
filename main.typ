@@ -1,7 +1,7 @@
 #import "@preview/mantys:1.0.2": *
 #import "@preview/codly:1.3.0": *
 #import "@preview/codly-languages:0.1.1": *
-#import "typ/orly-modified.typ" as orly-modified
+#import "orly-modified.typ" as orly-modified
 
 #show: mantys(
   name: "flux-book",

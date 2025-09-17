@@ -1,4 +1,4 @@
-#import "orly-modified.typ": alert
+#import "../orly-modified.typ": alert
 
 = Ownership in Flux
 
