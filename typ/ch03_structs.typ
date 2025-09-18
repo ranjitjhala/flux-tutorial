@@ -34,7 +34,7 @@ on the Flux Github
 #link("https://github.com/flux-rs/flux/issues/1106")[repository]:
 //
 #quote[
-How do you create a `Positivei32`? I can think of two ways: `struct Positivei32 { val: i32, }` and truct `Positivei32(i32);` but I do not know how to apply the refinements for them. I want it to be an invariant that the i32 value is >= 0. How would I do this?
+How do you create a `Positivei32`? I can think of two ways: `struct Positivei32 { val: i32, }` and truct `Positivei32(i32);` but I do not know how to apply the refinements for them. I want it to be an invariant that the `i32` value is `>= 0`. How would I do this?
 ]
 
 With Flux, you can define the `Positivei32` type as follows:
@@ -49,15 +49,15 @@ struct Positivei32 {
 ```
 
 In addition to defining the plain Rust type `Positivei32`,
-the refinements say _three_ distinct things:
+the refinements say three distinct things:
 
-1. the `refined_by(n: int)` tells flux to refine each
+1. `refined_by(n: int)` tells flux to refine each
    `Positivei32` with a special `int`-sorted _index_ named `n`,
-2. the `invariant(n > 0)` says that the index `n`
+2. `invariant(n > 0)` says that the index `n`
    is always positive, and
-3. the `field` attribute on `val` says that the
-   type of the field `val` is an `i32[n]`
-   i.e. is an `i32` whose exact value is `n`.
+3. `field` attribute on `val` says that the
+   type of the field `val` is `i32[n]`
+   _i.e._ is an `i32` whose exact value is `n`.
 
 // <!-- SLIDE -->
 
@@ -72,13 +72,29 @@ fn mk_positive_1() -> Positivei32 {
 }
 ```
 
-and Flux will prevent you from creating an _illegal_ `Positivei32`, like
+However, Flux will prevent you from creating an _illegal_ `Positivei32`, like
 
 ```flux
 #[spec(fn() -> Positivei32)]
 fn mk_positive_0() -> Positivei32 {
   Positivei32 { val: 0 }
 }
+```
+
+If you run Flux on the above code, you will get an error like
+
+```
+error[E0999]: refinement type error
+   --> src/ch03_structs.rs:102:3
+    |
+102 |   Positivei32 { val: 0 }
+    |   ^^^^^^^^^^^^^^^^^^^^^^ a precondition cannot be proved
+    |
+note: this is the condition that cannot be proved
+   --> src/ch03_structs.rs:54:13
+    |
+ 54 | #[invariant(n > 0)]
+    |             ^^^^^
 ```
 
 // <!-- SLIDE -->
