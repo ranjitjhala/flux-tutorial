@@ -26,6 +26,7 @@ crate/src/%.rs: typ/%.typ
 
 clean:
 	rm -f main.pdf
+	rm -rf book
 	rm -rf md/tutorial/*
 	rm -rf crate/src/ch*.rs
 	rm -rf crate/target
