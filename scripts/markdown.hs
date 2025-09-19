@@ -3,6 +3,7 @@
 import System.Environment (getArgs)
 import Data.Char (toUpper, isSpace)
 import Data.List (isPrefixOf)
+import Text.Printf (printf)
 
 
 convertChapterLinks :: String -> String
@@ -23,10 +24,21 @@ convertWord :: String -> String
 convertWord w
   | ['\\', '[', 'c', 'h', '\\', ']', ':'] `isPrefixOf` w =
     let suffix = drop 7 w
-        (file, rest) = span (/= '.') suffix
+        (link, rest) = span (/= '.') suffix
+        (file, sec)  = splitColon link
+        section      = if null sec then "" else '#' : sec
     in
-      "[this chapter](ch" ++ file ++ ".md)" ++ rest
+      printf "[this chapter](ch%s.md%s)%s" file section rest
   | otherwise = w
+
+splitColon :: String -> (String, String)
+splitColon s =
+  let (before, after) = break (== ':') s
+  in case after of
+       ':':rest -> (before, rest)
+       _        -> (before, "")
+
+-- ch:foo:bar --> [this chapter](chfoo.md#bar)
 
 tokenize :: String -> [String]
 tokenize [] = []

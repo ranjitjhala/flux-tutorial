@@ -8,6 +8,7 @@ incremental = true
 
 [package.metadata.flux]
 enabled = true
+include = ["src/ch03_structs.rs"]
 
 [dependencies]
 # flux-rs = { git = "https://github.com/flux-rs/flux" }

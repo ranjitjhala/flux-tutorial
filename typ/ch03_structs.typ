@@ -30,7 +30,7 @@ so we can precisely define the set of _legal_ values of those types.
 
 Lets start with a question posted by
 #link("https://github.com/Connor-GH")[Conner-GH]
-on the Flux Github
+on the Flux
 #link("https://github.com/flux-rs/flux/issues/1106")[repository]:
 //
 #quote[
@@ -81,7 +81,7 @@ fn mk_positive_0() -> Positivei32 {
 }
 ```
 
-If you run Flux on the above code, you will get an error like
+Flux will say that
 
 ```
 error[E0999]: refinement type error
@@ -97,6 +97,7 @@ note: this is the condition that cannot be proved
     |             ^^^^^
 ```
 
+indicating that as the index `n` gets the value `0` the invariant `n > 0` does not hold.
 // <!-- SLIDE -->
 
 === A Constructor
@@ -138,8 +139,9 @@ impl Positivei32 {
 === Tracking the Field Value
 
 In addition to letting us constrain the underlying `i32` to be positive,
-the `n: int` index lets Flux precisely _track_ the value of the `Positivei32`.
-For example, we can say that the following function returns a particular `Positivei32` whose value is `10`:
+the `n: int` index lets Flux precisely track the value of the `Positivei32`.
+For example, we can say that the following function returns a particular
+`Positivei32` whose value is `10`:
 
 ```flux
 #[spec(fn() -> Positivei32[{n:10}])]
@@ -159,11 +161,29 @@ check that
 ```flux
 #[spec(fn() -> i32[10])]
 fn test_ten() -> i32 {
-    let p = mk_positive_10(); // p   : Positivei32[{n: 10}]
-    let res = p.val;          // res : i32[10]
+    let p = mk_positive_10();
+    let res = p.val;
     res
 }
 ```
+
+If you look at the code in the Flux view, you can see what
+Flux is tracking about the different variables, as shown below.
+
+#figure(
+  grid(
+    columns: 1,
+    gutter: 1em,
+    image("../img/ch03_test10_1.png", width: 95%),
+    image("../img/ch03_test10_2.png", width: 95%)
+  ),
+  caption: [Types of variables in the `test_ten` function.]
+)
+
+1. _After the call_ (top) to `mk_positive_10()`, Flux knows `p: Positivei32[10]`;
+2. _After the field access_  (bottom) Flux "unpacks" the `struct` into its constituent `val` field of type `i32[10]` which is also the type assigned to `res`.
+
+
 
 // <!-- SLIDE -->
 
@@ -189,9 +209,10 @@ fn test_new() -> i32 {
 
 // <!-- SLIDE -->
 
-=== Field vs. Index?
-
-At this point, you might be wondering why, since `n` is the value of the field `val`,
+#alert("info", [
+*Field vs. Index:*
+At this point, you might be wondering why,
+since `n` is the value of the field `val`,
 we didn't just name the index `val` instead of `n`?
 
 Indeed, we could have named it `val`.
@@ -199,15 +220,16 @@ Indeed, we could have named it `val`.
 However, we picked a different name to emphasize that the index is _distinct from_
 the field. The field actually exists at run-time, but in contrast, the index is a
 _type-level property_ that only lives at compile-time.
+])
 
 // <!-- SLIDE -->
 
 == Integers in a Range
 
-Of course, once we can index and constrain a single field, we can do so for many fields.
+Of course, we can index and constrain `struct`s with multiple fields.
 //
-For instance, suppose we wanted to write a `Range` type with two fields `start` and `end`
-which are integers such that `start <= end`. We might do so as
+Lets write a `Range` type with two `i32` fields `start` and `end`
+where `start <= end`.
 
 ```flux
 #[refined_by(start: int, end: int)]
@@ -239,7 +261,22 @@ fn test_range() {
 }
 ```
 
-#alert("error", [show error message])
+Flux will reject the second `Range` and pinpoint the `invariant` that cannot be proved:
+
+```
+
+error[E0999]: refinement type error
+   --> src/ch03_structs.rs:323:9
+    |
+323 |         Range { start: 15, end: 5 }, // rejected!
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^ a precondition cannot be proved
+    |
+note: this is the condition that cannot be proved
+   --> src/ch03_structs.rs:294:13
+    |
+294 | #[invariant(start <= end)]
+    |             ^^^^^^^^^^^^
+```
 
 // <!-- SLIDE -->
 
@@ -248,8 +285,9 @@ fn test_range() {
 #alert("success", [
 *EXERCISE:* Fix the specification of the `new`
 constructor for `Range` so that both `new` and
-`test_range_new` are accepted by flux. (Again,
-you will need to _combine_ indexes and constraints
+`test_range_new` are accepted by Flux.
+//
+You will need to _combine_ indexes and constraints
 as shown in the example `add_points` shown
 in @ch:01_refinements:combining-indexes-and-constraints.
 ])
@@ -302,18 +340,16 @@ fn min(x:i32, y:i32) -> i32 {
 fn max(x:i32, y:i32) -> i32 {
   if x < y { y } else { x }
 }
-
-
 ```
 
 // // <!-- SLIDE -->
 
 == Refinement Functions
 
-When _code_ get's more complicated, we like to abstract it into reusable
+When code gets more complicated, we like to abstract it into reusable
 functions. Flux lets us do the same for refinements too. For example, we
 can define refinement-level functions `min` and `max` which take `int`
-(not `i32` or `usize` but logical `int`) as input and return that as output.
+(not `i32` or `usize` but mathematical `int`) as input and return an `int` as output.
 
 ```flux
 defs! {

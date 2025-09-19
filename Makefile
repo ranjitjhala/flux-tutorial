@@ -28,6 +28,7 @@ clean:
 	rm -f main.pdf
 	rm -rf md/tutorial/*
 	rm -rf crate/src/ch*.rs
-	rm -rf log
+	rm -rf crate/target
+	rm -rf crate/log
 
 .PHONY: md-files
