@@ -15,7 +15,7 @@ fn assert(b: bool) {
 }
 ```
 
-[Previously](./03-structs.md) we saw how to refine structs to constrain the space
+Previously in @ch:03_structs we saw how to refine structs to constrain the space
 of legal values, for example, to define a `Positivei32` or a `Range` `struct` where
 the `start` was less than or equal to the `end`. Next, lets see how the same mechanism
 can be profitably used to let us check properties of `enums` at compile time.
@@ -29,7 +29,7 @@ manner of bugs at compile time. However, that just makes
 it all the more disheartening to get runtime errors like
 
 ```
-thread ... panicked at ... called `Option::unwrap()` on a `None` value
+thread panicked ... called `Option::unwrap()` on a `None` value
 ```
 
 Lets see how to refine `enum`'s like `Option` to

@@ -76,6 +76,16 @@
     let fig-num = counter(figure).at(el.location()).first()
     // Display as "Chapter.Figure" (e.g., "2.1")
     link(el.location())[Figure #chapter-num.#fig-num]
+  } else if el != none and el.func() == heading {
+    // Handle heading references
+    if el.level == 1 {
+      // Level 1 headings are chapters
+      let chapter-num = counter(heading).at(el.location()).first()
+      link(el.location())[Chapter #chapter-num]
+    } else {
+      // Other levels use default behavior
+      it
+    }
   } else {
     // Default reference
     it
