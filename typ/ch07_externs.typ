@@ -1,6 +1,6 @@
 #import "../orly-modified.typ": alert
 
-= Extern Specifications
+= Extern Specs fications <ch:07_externs>
 
 ```fluxhidden
 #![feature(allocator_api)]

@@ -1,6 +1,6 @@
 #import "../orly-modified.typ": alert
 
-= Opaque Types: Refined Vectors
+= Opaque Types
 
 ```fluxhidden
 #![allow(unused)]

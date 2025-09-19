@@ -10,7 +10,7 @@
 - [Refinements](tutorial/ch01_refinements.md)
 - [Ownership](tutorial/ch02_ownership.md)
 - [Structs](tutorial/ch03_structs.md)
-- [Enums]()
+- [Enums](tutorial/ch04_enums.md)
 - [Opaques]()
 - [Consts]()
 - [Externs]()
