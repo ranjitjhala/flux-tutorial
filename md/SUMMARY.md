@@ -16,9 +16,9 @@
 - [Externs]()
 - [Traits]()
 - [Case Study: Sparse Matrices]()
-- [Case Study: Normal Forms]()
 - [Case Study: Neural Networks]()
-- [Case Study: Maps & Interpreters]()
+- [Case Study: Normal Forms]()
+- [Case Study: Scopes & Interpreters]()
 
 # Appendix
 

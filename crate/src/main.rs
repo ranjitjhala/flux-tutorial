@@ -14,6 +14,7 @@ pub mod ch01_refinements;
 pub mod ch02_ownership;
 pub mod ch03_structs;
 pub mod ch04_enums;
+pub mod ch05_vectors;
 
 fn main() {
     return;

@@ -1,24 +1,37 @@
+/*
 #import "../orly-modified.typ": alert
 
 = Traits and Associated Refinements <ch:08_traits>
 
-```fluxhidden
+*/
+
+
+
 #![allow(unused)]
 extern crate flux_rs;
 extern crate flux_core;
 extern crate flux_alloc;
 use flux_rs::{attrs::*, extern_spec};
 use std::ops::Range;
-```
 
-```fluxhidden
+
+
+/*
+
+*/
+
+
+
 #[spec(fn (bool[true]))]
 fn assert(b: bool) {
     if !b {
         panic!("assertion failed");
     }
 }
-```
+
+
+
+/*
 
 One of Rust's most appealing features is its `trait` system which lets us decouple
 _descriptions_ of particular operations that a type should support, from their actual
@@ -52,19 +65,28 @@ To limber up before we get to traits, lets
 write a function to return (a reference to)
 the first element of a slice.
 
-```flux
+*/
+
+
+
 fn get_first_slice<A>(container: &[A]) -> &A
 {
     &container[0]
 }
-```
+
+
+
+/*
 
 The method `get_first_slice` works just
 fine if you call it on _non-empty_ slices,
 but will panic at run-time if you try it on
 an empty one
 
-```flux
+*/
+
+
+
 fn test_first_slice() {
     let s0: &[i32] = &[10, 20, 30];
     let v0 = get_first_slice(s0);
@@ -78,7 +100,10 @@ fn test_first_slice() {
     let v2 = get_first_slice(s2);
     println!("get_first_slice {s2:?} ==> {v2}");
 }
-```
+
+
+
+/*
 
 === Catching Panics at Compile Time
 
@@ -118,13 +143,19 @@ Next, lets write our own little trait to index different kinds of containers [^1
 
 
 
-```flux
+*/
+
+
+
 pub trait IndexV1<Idx> {
     type Output:?Sized;
 
     fn index(&self, index: Idx) -> &Self::Output;
 }
-```
+
+
+
+/*
 
 The above snippet defines a `trait` called `IndexV1` that is parameterized by `Idx`: the
 type used as the actual index. To *implement* the trait, we must specify
@@ -141,14 +172,20 @@ For instance, we can generalize the `get_first_slice` method, which only worked 
 to the `get_firstV1` method will let use borrow the `0`th element of _any_ `container` that
 implements `Index<usize>`.
 
-```flux
+*/
+
+
+
 fn get_firstV1<A, T>(container: &T) -> &A
   where
     T: ?Sized + IndexV1<usize, Output = A>
 {
     container.index(0)
 }
-```
+
+
+
+/*
 
 === Indexing Slices with `usize`
 
@@ -157,7 +194,10 @@ To use the `trait`, we must actually *implement* it for particular types of inte
 Lets implement a method to `index` a slice by a `usize` value:
 
 
-```flux
+*/
+
+
+
 #[trusted]
 impl <A> IndexV1<usize> for [A] {
 
@@ -167,7 +207,10 @@ impl <A> IndexV1<usize> for [A] {
         &self[index]
     }
 }
-```
+
+
+
+/*
 
 The above code describes an implementation where the
 
@@ -184,7 +227,10 @@ without protesting about `self[index]` triggering an out-of-bounds error.
 Sweet! Now that we have a concrete implementation for `Index`
 we should be able to _test_ it
 
-```flux
+*/
+
+
+
 fn test_firstV1() {
     let s0: &[i32] = &[10, 20, 30];
     let v0 = get_firstV1(s0);
@@ -198,7 +244,10 @@ fn test_firstV1() {
     let v2 = get_firstV1(s2);
     println!("get_firstV1 {s2:?} ==> {v2}");
 }
-```
+
+
+
+/*
 
 Click the run button. Huh?! No warnings??
 
@@ -263,7 +312,10 @@ Thus, we can extend the trait with an associated refinement
 that specifies when an index is `valid` for a container.
 Lets do so by defining the `Index` trait as:
 
-```flux
+*/
+
+
+
 #[reft(fn valid(me: Self, index: Idx) -> bool)]
 pub trait Index<Idx:?Sized> {
     type Output:?Sized;
@@ -271,7 +323,10 @@ pub trait Index<Idx:?Sized> {
     #[spec(fn(&Self[@me], idx:Idx{<Self as Index<Idx>>::valid(me, idx)}) -> &Self::Output)]
     fn index(&self, idx: Idx) -> &Self::Output;
 }
-```
+
+
+
+/*
 
 There are _two_ new things in our new version of `Index`.
 
@@ -297,14 +352,20 @@ We can now write functions that work over *any* type that implements the `Index`
 but where flux will guarantee that `index` is safe to call. For example, lets revisit
 the `get_first` method that returns the 0th element of a container.
 
-```flux
+*/
+
+
+
 // #[spec(fn (&T{container:<T as Index<usize>>::valid(container, 0)}) -> &A)]
 fn get_first<A, T>(container: &T) -> &A
   where T: ?Sized + Index<usize, Output = A>
 {
     container.index(0)
 }
-```
+
+
+
+/*
 
 Aha, now flux complains that the above is _unsafe_ because we don't know that `container`
 is _actually_ `valid` for the index `0`. To make it safe, we must add (uncomment!) the
@@ -315,7 +376,10 @@ with a `container` that is `valid` for the index `0`.
 
 Lets now revisit that implementation of for slices using `usize` indexes.
 
-```flux
+*/
+
+
+
 #[assoc(fn valid(size: int, index: int) -> bool { index < size })]
 impl <A> Index<usize> for [A] {
 
@@ -326,7 +390,10 @@ impl <A> Index<usize> for [A] {
         &self[index]
     }
 }
-```
+
+
+
+/*
 
 As with the trait definition, there are two new things in our implementation of `Index` for slices.
 
@@ -347,7 +414,10 @@ method has been refined to say that it should only be passed an
 
 Now, lets revisit our clients for `get_first` using the new `Index` trait.
 
-```flux
+*/
+
+
+
 fn test_first() {
     let s0: &[i32] = &[10, 20, 30];
     let v0 = get_first(s0);
@@ -361,7 +431,10 @@ fn test_first() {
     let v2 = get_first(s2);
     println!("get_first {s2:?} ==> {v2}");
 }
-```
+
+
+
+/*
 
 _Hooray!_ Now, when you click the check button, flux will complain about the
 last call to `get_first` because the slice `s2` is _not_ `valid` for the index `0`!
@@ -377,7 +450,10 @@ The whole point of the `Index` trait is be able to `index` _different kinds_ of
 containers. Lets see how to implement `Index` for `str` using `Range<usize>` indexes,
 which return sub-slices of the string.
 
-```flux
+*/
+
+
+
 #[assoc(fn valid(me: str, index: Range) -> bool {
     index.start <= index.end && index.end <= str_len(me)
 })]
@@ -390,7 +466,10 @@ impl Index<Range<usize>> for str  {
         &self[idx.start..idx.end]
     }
 }
-```
+
+
+
+/*
 
 The implementation above, implements `Index<Range<usize>>` for `str` by
 
@@ -406,13 +485,19 @@ Now when we run flux on clients of this implementation,
 we can see that the first call is a valid sub-slice, but the
 second is _not_ and hence, is rejected by flux.
 
-```flux
+*/
+
+
+
 fn test_str() {
     let cat = "caterpillar";
     let sub = cat.index(0..6); // OK
     let sub = cat.index(0..19); // Error
 }
-```
+
+
+
+/*
 
 Flux produces the error pinpointing the problem:
 
@@ -442,7 +527,10 @@ the below `impl`?
 ])
 
 
-```flux
+*/
+
+
+
 #[assoc(fn valid(me: Vec, index: int) -> bool { true })]
 impl <A:Copy> Index<usize> for Vec<A> {
     type Output = A;
@@ -452,7 +540,10 @@ impl <A:Copy> Index<usize> for Vec<A> {
         &self[index]
     }
 }
-```
+
+
+
+/*
 
 #alert("success", [
 *EXERCISE:* Let's write a client that uses the `index` on `Vec`
@@ -460,7 +551,10 @@ to compute a dot-product for two `Vec<f64>`. Can you fix the `spec`
 for `dot_vec` so flux accepts it?
 ])
 
-```flux
+*/
+
+
+
 #[spec(fn (xs: &Vec<f64>, ys: &Vec<f64>) -> f64)]
 fn dot_vec(xs: &Vec<f64>, ys: &Vec<f64>) -> f64 {
     let mut res = 0.0;
@@ -469,7 +563,10 @@ fn dot_vec(xs: &Vec<f64>, ys: &Vec<f64>) -> f64 {
     }
     res
 }
-```
+
+
+
+/*
 
 == Indexing Vectors with Ranges
 
@@ -478,7 +575,10 @@ fn dot_vec(xs: &Vec<f64>, ys: &Vec<f64>) -> f64 {
 Why does flux reject the below `impl`? Can you edit the code so flux accepts it?
 ])
 
-```flux
+*/
+
+
+
 #[assoc(fn valid(me: Vec, idx: Range<int>) -> bool {
     true
   })]
@@ -491,7 +591,10 @@ impl <A> Index<Range<usize>> for Vec<A> {
         &self[idx.start..idx.end]
     }
 }
-```
+
+
+
+/*
 
 == Summary
 
@@ -528,3 +631,4 @@ to the particular `Self` and `Idx` types of the implementation.
 [^4]: See section 6.2 of this [POPL 2025 paper](https://ranjitjhala.github.io/static/popl25-generic-refinements.pdf) for more details.
 
 [^5]: See this [SOSP 2025 paper](https://ranjitjhala.github.io/static/sosp25-ticktock.pdf) for more details.
+*/

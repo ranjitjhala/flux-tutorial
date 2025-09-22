@@ -1,3 +1,4 @@
+/*
 #import "../orly-modified.typ": alert
 
 = Const Generics
@@ -212,3 +213,4 @@ Rust's (sized) arrays are great, and Flux's refinements make them even better,
 by ensuring indices are guaranteed to be within the arrays bounds. Const generics
 let us write functions that are polymorphic over array sizes, and again, refinements
 let us precisely track those sizes to prevent out-of-bounds errors!
+*/

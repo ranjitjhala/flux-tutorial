@@ -1,12 +1,19 @@
+/*
 #import "../orly-modified.typ": alert
 
 = Ownership in Flux <ch:02_ownership>
 
-```fluxhidden
+*/
+
+
+
 #![allow(unused)]
 extern crate flux_rs;
 use flux_rs::attrs::*;
-```
+
+
+
+/*
 
 Previously, in @ch:01_refinements we saw how to refine basic Rust
 types like `i32` and `bool` with _indices_ and _constraints_ to
@@ -16,7 +23,10 @@ For instance, we wrote an `assert` function which can
 _only_ be called with `true` so if the code typechecks,
 we know that the assertion _cannot_ fail at runtime.
 
-```fluxhidden
+*/
+
+
+
 #[spec(fn (bool[true]))]
 fn assert(b: bool) {
     if !b {
@@ -28,7 +38,10 @@ fn test_assert() {
     assert(2 + 2 == 4);
     assert(2 + 2 == 5); // fails to type check
 }
-```
+
+
+
+/*
 
 The whole point of Rust, of course, is to allow for efficient
 imperative _sharing_ and _updates_, via the clever type system
@@ -54,7 +67,10 @@ track the value whenever the location is changed.
 
 For example, consider the program
 
-```flux
+*/
+
+
+
 #[flux_rs::spec(fn () -> i32[3])]
 pub fn mk_three() -> i32 {
   let mut r = 0;  // r: i32[0]
@@ -66,7 +82,10 @@ pub fn mk_three() -> i32 {
   assert(r == 3); // r: i32[3]
   r
 }
-```
+
+
+
+/*
 
 As shown in the figure below  @fig:mk_three, the variable `r`
 has different types at each point inside `mk_three`.
@@ -90,7 +109,10 @@ This exclusive ownership mechanism is at work
 in the `factorial` example we signed off with
 previously in @ch:01_refinements.
 
-```flux
+*/
+
+
+
 #[spec(fn (n:i32{0 <= n}) -> i32{v:n <= v})]
 pub fn factorial(n: i32) -> i32 {
     let mut i = 0;  // i: i32[0]
@@ -103,7 +125,10 @@ pub fn factorial(n: i32) -> i32 {
     }
     r
 }
-```
+
+
+
+/*
 
 In the above code, `i` and `r` start off at `0` and `1`
 but then Flux infers that inside the `while` loop
@@ -131,7 +156,10 @@ which denote _read-only_ access to a value
 of type `T`. For example, we might write `abs` to take
 a shared reference to an `i32`
 
-```flux
+*/
+
+
+
 #[spec(fn (p: &i32[@n]) -> i32{v: 0 <= v && n <= v })]
 pub fn abs(p: &i32) -> i32 {
     let n = *p;
@@ -141,7 +169,10 @@ pub fn abs(p: &i32) -> i32 {
         0 - n
     }
 }
-```
+
+
+
+/*
 
 Notice that the _input_ type has changed. Now, the function
 
@@ -160,13 +191,19 @@ So, for example, Flux can check the below code by automatically
 determining that at the call-site, the value of the refinement
 parameter `n` is `10`.
 
-```flux
+*/
+
+
+
 pub fn test_abs() {
     let z = 10;
     assert(0 <= abs(&z));
     assert(10 <= abs(&z))
 }
-```
+
+
+
+/*
 
 
 === Refinement Parameters
@@ -208,12 +245,18 @@ of the underlying data. As an example, consider the following function
 that _decrements_ the value of a mutable reference while ensuring the
 data is non-negative:
 
-```flux
+*/
+
+
+
 #[spec(fn(p: &mut i32{v:0 <= v}))]
 pub fn decr(p: &mut i32) {
     *p = *p - 1;
 }
-```
+
+
+
+/*
 
 Flux complains that
 
@@ -238,7 +281,10 @@ original contents are in fact _non-zero_
 Flux uses Rust's borrowing rules to track invariants even when
 there may be aliasing. As an example, consider the function
 
-```flux
+*/
+
+
+
 #[spec(fn (bool) -> i32{v:0 <= v})]
 fn test_alias(z: bool) -> i32 {
     let mut x = 1;  // x: i32[1]
@@ -248,7 +294,10 @@ fn test_alias(z: bool) -> i32 {
     decr(r);
     *r
 }
-```
+
+
+
+/*
 
 The reference `r` could point to _either_ `x` or `y` depending
 on the (unknown) value of the boolean `z`. Nevertheless, Flux
@@ -266,7 +315,10 @@ that actually _changes_ the value's (refinement) type upon exit.
 For example, consider the following function to _increment_
 a reference to a non-negative `i32`
 
-```flux
+*/
+
+
+
 #[spec(fn (p: &mut i32{v:0 <= v}))]
 fn incr_inv(p: &mut i32) {
   *p += 1
@@ -277,7 +329,10 @@ fn test_incr_inv() {
   incr_inv(&mut z);
   assert(z == 11); // rejected by Flux :-(
 }
-```
+
+
+
+/*
 
 The only information that Flux has about `incr` what
 it says in its `spec`, namely, that `p` remains non-negative.
@@ -301,12 +356,18 @@ specify how the type is changed when the function exits
 the type specifications], using an `ensures` clause that
 specifies the _updated_ type of the reference. ])
 
-```flux
+*/
+
+
+
 #[flux_rs::spec(fn(p: &mut i32[@n]) ensures p:i32[n+1])]
 fn incr(p: &mut i32) {
   *p += 1
 }
-```
+
+
+
+/*
 
 The Flux signature refines the plain Rust one to specify that
 
@@ -318,13 +379,19 @@ With this specification, Flux merrily checks `test_incr`, by
 determining that the refinement parameter `@n` is `10` and
 hence, that upon return `x: i32[11]`.
 
-```flux
+*/
+
+
+
 fn test_incr() {
   let mut z = 10;
   incr_inv(&mut z);
   assert(z == 11);
 }
-```
+
+
+
+/*
 
 
 == Summary
@@ -334,3 +401,4 @@ To sum up, Flux exploits Rust's ownership mechanisms to
 1. *track properties* of _shared_ references (`&T`)
 2. *preserve invariants* of _mutable_ references (`&mut T`), and
 3. *strongly update* types of _strongly mutable_ references with `ensures` clauses that specify the type after the call.
+*/

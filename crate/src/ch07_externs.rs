@@ -1,15 +1,22 @@
+/*
 #import "../orly-modified.typ": alert
 
 = Extern Specs <ch:07_externs>
 
-```flux
+*/
+
+
+
 #![feature(allocator_api)]
 #![allow(unused)]
 extern crate flux_rs;
 use flux_rs::{attrs::*, extern_spec, assert};
 use std::alloc::{Allocator, Global};
 use std::mem::swap;
-```
+
+
+
+/*
 
 No man is an island.
 //
@@ -47,7 +54,10 @@ the function `std::mem::swap`.
 
 Lets write a little test that creates to references and swaps them
 
-```flux
+*/
+
+
+
 pub fn test_swap() {
     let mut x = 5;
     let mut y = 10;
@@ -55,7 +65,10 @@ pub fn test_swap() {
     assert(x == 10);
     assert(y == 5);
 }
-```
+
+
+
+/*
 
 Now, if you push the *play button* you should see that Flux cannot prove
 the two `assert`s. The little red squiggles indicate it does not know that
@@ -68,12 +81,18 @@ We can fill this gap in flux's understanding by providing
 an `extern-spec` that gives flux a refined type
 specification for `swap`
 
-```flux
+*/
+
+
+
 #[extern_spec]
 // UNCOMMENT THIS LINE to verify `test_swap`
 // #[spec(fn(x: &mut T[@vx], y: &mut T[@vy]) ensures x: T[vy], y: T[vx])]
 fn swap<T>(a: &mut T, b: &mut T);
-```
+
+
+
+/*
 
 #alert("info", [
 *The Refined Specification:* says that `swap` takes as input
@@ -102,7 +121,10 @@ from `std::mem`. Here, we are simply telling Flux to use the
 Here is a function that returns the `first` (well, `0`th)
 element of a slice of `u32`s.
 
-```flux
+*/
+
+
+
 fn first(slice: &[u32]) -> Option<u32> {
     let n = slice.len();
     if n > 0 {
@@ -111,7 +133,10 @@ fn first(slice: &[u32]) -> Option<u32> {
         None
     }
 }
-```
+
+
+
+/*
 
 #alert("success", [
 *EXERCISE:* Unfortunately, flux does not know what `slice.len()` returns, and
@@ -122,13 +147,19 @@ You might want to refresh your memory about the meaning of
 on the sizes of arrays and slices.
 ])
 
-```flux
+*/
+
+
+
 #[extern_spec]
 impl<T> [T] {
     #[spec(fn(&[T][@n]) -> usize)]
     fn len(v: &[T]) -> usize;
 }
-```
+
+
+
+/*
 
 == Extern Specs for Enums: `Option`
 
@@ -152,7 +183,10 @@ The `extern_spec` mechanism lets us do the same thing, but directly on
 
 First, lets add the `bool` index to the `Option` type definition.
 
-```flux
+*/
+
+
+
 #[extern_spec]
 #[refined_by(valid: bool)]
 enum Option<T> {
@@ -161,7 +195,10 @@ enum Option<T> {
     #[variant((T) -> Option<T>[{valid: true}])]
     Some(T),
 }
-```
+
+
+
+/*
 
 As you might have noticed, this bit is *identical*
 to the refined version of `Option` that we saw in
@@ -174,7 +211,10 @@ Adding the above "retrofits" the `bool` index directly
 into the `std::option::Option` type. So, for example
 we can write
 
-```flux
+*/
+
+
+
 #[spec(fn () -> Option<i32>[{valid: true}])]
 fn test_some() -> Option<i32> {
     Some(42)
@@ -184,7 +224,10 @@ fn test_some() -> Option<i32> {
 fn test_none() -> Option<i32> {
     None
 }
-```
+
+
+
+/*
 
 #alert("info", [)
 *TIP:* When there is a single field like `valid`
@@ -200,7 +243,10 @@ the methods that `impl`ement various key operations on `Option`s.
 To do so, we can make an `extern_spec` `impl` for `Option`, much like
 we did for slices, back in @ch:07_externs:getting-the-length-of-a-slice.
 
-```flux
+*/
+
+
+
 #[extern_spec]
 impl<T> Option<T> {
     #[sig(fn(&Option<T>[@b]) -> bool[b])]
@@ -212,7 +258,10 @@ impl<T> Option<T> {
     #[sig(fn(Option<T>[true]) -> T)]
     const fn unwrap(self) -> T;
 }
-```
+
+
+
+/*
 
 The definition looks rather like the actual one,
 except that it wears the `#[extern_spec]` attribute
@@ -229,14 +278,20 @@ Notice that the spec for
 
 We can test these new specifications out in our client code.
 
-```flux
+*/
+
+
+
 fn test_opt_specs(){
     let a = Some(42);
     assert(a.is_some());
     let b: Option<i32> = None;
     assert(b.is_none());
 }
-```
+
+
+
+/*
 
 === Safely Unwrapping
 
@@ -246,7 +301,10 @@ is indeed a valid `Some(..)`. The refined type for `unwrap` keeps
 us honest with a _precondition_ that tells flux that it should
 only be invoked when the underlying `Option` can be provably `valid`.
 
-```flux
+*/
+
+
+
 #[spec(fn (n:u32) -> Option<u8>)]
 fn into_u8(n: u32) -> Option<u8> {
    if n <= 255 {
@@ -259,7 +317,10 @@ fn into_u8(n: u32) -> Option<u8> {
 fn test_unwrap() -> u8 {
     into_u8(42).unwrap()
 }
-```
+
+
+
+/*
 
 #alert("success", [
 *EXERCISE:* The function `test_unwrap` above
@@ -277,7 +338,10 @@ so that flux verifies `test_unwrap`?
 Lets write a safe-division function, that checks if the divisor
 is non-zero before doing the division.
 
-```flux
+*/
+
+
+
 #[spec(fn (num: u32, denom: u32) -> Option<u32[num / denom]>)]
 pub fn safe_div(num: u32, denom: u32) -> Option<u32> {
     if denom == 0 {
@@ -286,7 +350,10 @@ pub fn safe_div(num: u32, denom: u32) -> Option<u32> {
         Some(num / denom)
     }
 }
-```
+
+
+
+/*
 
 #alert("success", [
 *EXERCISE:* The client `test_safe_div` shown below is certainly it is safe to
@@ -295,12 +362,18 @@ divide by two! Alas, Flux thinks otherwise: it cannot determine that output of
 for `safe_div` so that the code below verifies?
 ])
 
-```flux
+*/
+
+
+
 pub fn test_safe_div() {
     let res = safe_div(42, 2).unwrap();
     assert(res == 21);
 }
-```
+
+
+
+/*
 
 
 == Extern Specs for Structs: `Vec`
@@ -319,12 +392,18 @@ As with `enum`s we start by sprinkling refinement
 indices on the `struct` definition. Since we want
 to track sizes, lets write
 
-```flux
+*/
+
+
+
 #[extern_spec]
 #[refined_by(len: int)]
 #[invariant(0 <= len)]
 struct Vec<T, A: Allocator = Global>;
-```
+
+
+
+/*
 
 === Extern Invariants
 
@@ -345,22 +424,34 @@ used to construct and manipulate the `struct`.
 
 The simplest of these is the one that births an *empty* `Vec`
 
-```flux
+*/
+
+
+
 #[extern_spec]
 impl<T> Vec<T> {
     #[spec(fn() -> Vec<T>[0])]
     fn new() -> Vec<T>;
 }
-```
+
+
+
+/*
 
 We can test this out by creating an empty vector
 
-```flux
+*/
+
+
+
 #[spec(fn () -> Vec<i32>[0])]
 fn test_new() -> Vec<i32> {
     Vec::new()
 }
-```
+
+
+
+/*
 
 === Extern Specs for Impl Methods
 
@@ -379,7 +470,10 @@ As it happens, `push` and `pop` are defined in a *separate*
 `impl` block, parameterized by a generic `A: Allocator`, so
 our `extern_spec` mirrors this block:
 
-```flux
+*/
+
+
+
 #[extern_spec]
 impl<T, A: Allocator> Vec<T, A> {
     #[spec(fn(self: &mut Vec<T, A>[@n], T)
@@ -396,13 +490,19 @@ impl<T, A: Allocator> Vec<T, A> {
     #[spec(fn(self: &Vec<T, A>) -> bool)]
     fn is_empty(&self) -> bool;
 }
-```
+
+
+
+/*
 
 === Constructing Vectors
 
 Lets take the refined `vec` API out for a spin.
 
-```flux
+*/
+
+
+
 #[spec(fn() -> Vec<i32>[3])]
 pub fn test_push() -> Vec<i32> {
     let mut res = Vec::new();   // res: Vec<i32>[0]
@@ -412,7 +512,10 @@ pub fn test_push() -> Vec<i32> {
     assert(res.len() == 3);
     res
 }
-```
+
+
+
+/*
 
 Flux uses the refinements to type `res` as a 0-sized `Vec<i32>[0]`.
 Each subsequent `push` updates the reference's type
@@ -430,7 +533,10 @@ proving the assert.
 two assertions below are verified?
 ])
 
-```flux
+*/
+
+
+
 fn test_is_empty() {
    let v0 = test_new();
    assert(v0.is_empty());
@@ -438,14 +544,20 @@ fn test_is_empty() {
    let v1 = test_push();
    assert(!v1.is_empty());
 }
-```
+
+
+
+/*
 
 === The Refined `vec!` Macro
 
 The ubiquitous `vec!` macro internally allocates a slice
 and then calls `into_vec` to create a `Vec`.
 
-```flux
+*/
+
+
+
 #[extern_spec]
 impl<T> [T] {
     #[spec(fn(self: Box<[T], A>) -> Vec<T, A>)]
@@ -453,35 +565,50 @@ impl<T> [T] {
     where
         A: Allocator;
 }
-```
+
+
+
+/*
 
 #alert("success", [
 *EXERCISE:* Can you fix the `extern_spec` for `into_vec` so that
 the code below verifies?
 ])
 
-```flux
+*/
+
+
+
 #[spec(fn() -> Vec<i32>[3])]
 pub fn test_push_macro() -> Vec<i32> {
     let res = vec![10, 20, 30];
     assert(res.len() == 3);
     res
 }
-```
+
+
+
+/*
 
 === Pop-and-Unwrap
 
 Suppose we wanted to write a function that popped the last element
 of a non-empty vector.
 
-```flux
+*/
+
+
+
 #[spec(fn (vec: &mut Vec<T>[@n]) -> T
        requires 0 < n
        ensures  vec: Vec<T>[n-1])]
 fn pop_and_unwrap<T>(vec: &mut Vec<T>) -> T {
     vec.pop().unwrap()
 }
-```
+
+
+
+/*
 
 #alert("success", [
 *EXERCISE:* Flux chafes because the spec for `pop` is too _weak_:
@@ -498,7 +625,10 @@ why flux rejects the `pop2` function below, and modify the spec
 so that it is accepted?
 ])
 
-```flux
+*/
+
+
+
 #[spec(fn (vec: &mut Vec<T>[@n]) -> (T, T)
        ensures vec: Vec<T>[n-2] )]
 fn pop2<T>(vec: &mut Vec<T>) -> (T, T)  {
@@ -506,7 +636,10 @@ fn pop2<T>(vec: &mut Vec<T>) -> (T, T)  {
     let v2 = pop_and_unwrap(vec);
     (v1, v2)
 }
-```
+
+
+
+/*
 
 == Summary
 
@@ -521,3 +654,4 @@ e.g. in external crates being used by your code.
 Next, we'll learn how to use `extern_spec` to refine _traits_
 (and their implementations), which is key to checking idiomatic
 Rust code.
+*/

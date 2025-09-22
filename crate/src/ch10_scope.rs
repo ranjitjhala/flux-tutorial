@@ -1,5 +1,7 @@
+/*
 #import "../orly-modified.typ": alert
 
-= Normal Forms <ch:10_anf>
+= Well-Scoped Interpreters <ch:10_scope>
 
 #alert("error", [TODO])
+*/

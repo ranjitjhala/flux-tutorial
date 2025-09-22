@@ -1,13 +1,20 @@
+/*
 #import "../orly-modified.typ": alert
 
 = Opaque Types
 
-```fluxhidden
+*/
+
+
+
 #![allow(unused)]
 extern crate flux_rs;
 use flux_rs::attrs::*;
 use flux_rs::assert;
-```
+
+
+
+/*
 
 // [Online demo](https://flux.goto.ucsd.edu/index.html#?demo=vectors.rs)
 
@@ -36,13 +43,19 @@ is just a wrapper around the `std::vec::Vec`
 type, but with an _index_ that tracks
 the size of the vector.
 
-```flux
+*/
+
+
+
 #[opaque]
 #[refined_by(len: int)]
 pub struct RVec<T> {
     inner: Vec<T>,
 }
-```
+
+
+
+/*
 
 // <!-- SLIDE -->
 
@@ -84,7 +97,10 @@ in the index.
 
 I suppose we must start with nothing: the empty vector.
 
-```flux
+*/
+
+
+
 #[trusted]
 impl<T> RVec<T> {
     #[spec(fn() -> RVec<T>[0])]
@@ -92,7 +108,10 @@ impl<T> RVec<T> {
         Self { inner: Vec::new() }
     }
 }
-```
+
+
+
+/*
 
 The above implements `RVec::new` as a wrapper around `Vec::new`.
 The `#[trusted]` attribute tells flux to _not_ check this code,
@@ -118,7 +137,10 @@ An empty vector is a rather desolate thing.
 To be of any use, we need to be able to `push`
 values into it, like so
 
-```flux
+*/
+
+
+
 #[trusted]
 impl<T> RVec<T> {
     #[spec(fn(self: &mut RVec<T>[@n], T) ensures self: RVec<T>[n+1])]
@@ -126,7 +148,10 @@ impl<T> RVec<T> {
         self.inner.push(item);
     }
 }
-```
+
+
+
+/*
 
 The refined type for `push` says that it takes a
 _strong reference_ (described in @ch:02_ownership:strongly-mutable-references)
@@ -137,7 +162,10 @@ the size of `self` is increased by `1`.
 
 Lets test that the types are in fact tracking sizes.
 
-```flux
+*/
+
+
+
 #[spec(fn () -> RVec<i32>[3])]
 fn test_push() -> RVec<i32> {
     let mut vec = RVec::new(); // vec: RVec<i32>[0]
@@ -146,13 +174,19 @@ fn test_push() -> RVec<i32> {
     vec.push(3);               // vec: RVec<i32>[3]
     vec
 }
-```
+
+
+
+/*
 
 #alert("success", [
 *EXERCISE:*: Can fix the bug in `zeros` so that it typechecks?
 ])
 
-```flux
+*/
+
+
+
 #[spec(fn(n: usize) -> RVec<i32>[n])]
 fn zeros(n:usize) -> RVec<i32> {
     let mut v = RVec::new(); // v: RVec<i32>[0]
@@ -163,7 +197,10 @@ fn zeros(n:usize) -> RVec<i32> {
     }
     v
 }
-```
+
+
+
+/*
 
 === Popping Values
 
@@ -175,7 +212,10 @@ Aha, but what if the vector is empty? You _could_ return an `Option<T>`, and
 let the caller figure it out. Instead, since we're tracking sizes, we could
 _require_ that `pop` only be called with _non-empty vectors_.
 
-```flux
+*/
+
+
+
 #[trusted]
 impl<T> RVec<T> {
     #[spec(fn(self: &mut {RVec<T>[@n] | 0 < n}) -> T
@@ -184,7 +224,10 @@ impl<T> RVec<T> {
       self.inner.pop().unwrap()
     }
 }
-```
+
+
+
+/*
 
 Note that unlike `push` which works for _any_ `RVec<T>[@n]`, the `pop`
 method requires that `0 < n` i.e. that the vector is _not_ empty.
@@ -195,7 +238,10 @@ Now already Flux can start checking some code. For example, if you `push` two
 elements, then you can `pop` twice, but Flux will reject the third `pop` at
 compile-time
 
-```flux
+*/
+
+
+
 fn test_push_pop() {
     let mut vec = RVec::new();   // vec: RVec<i32>[0]
     vec.push(10);                // vec: RVec<i32>[1]
@@ -204,7 +250,10 @@ fn test_push_pop() {
     vec.pop();                   // vec: RVec<i32>[0]
     vec.pop();                   // rejected!
 }
-```
+
+
+
+/*
 
 In fact, the error message from `Flux` will point to exact condition that
 does not hold
@@ -243,7 +292,10 @@ We can do that by writing a `len` method that returns
 a `usize` corresponding to (and hence, by indexed by)
 the size of the input vector
 
-```flux
+*/
+
+
+
 #[flux_rs::trusted]
 impl<T> RVec<T> {
     #[spec(fn(&RVec<T>[@vec]) -> usize)]
@@ -251,7 +303,10 @@ impl<T> RVec<T> {
         self.inner.len()
     }
 }
-```
+
+
+
+/*
 
 #alert("success", [
 *EXERCISE:* Can you modify the `spec` for `len` so that the code below
@@ -260,7 +315,10 @@ returned by `.len()` is exactly `2`, and after two `pop`s the size is
 back to `0`.
 ])
 
-```flux
+*/
+
+
+
 fn test_len() {
     let mut vec = RVec::new();
     vec.push(10);
@@ -270,7 +328,10 @@ fn test_len() {
     vec.pop();
     assert(vec.len() == 0);
 }
-```
+
+
+
+/*
 
 // <!-- SLIDE -->
 
@@ -285,7 +346,10 @@ Now that we're tracking sizes, we can _require_
 that the method to `get` an element only be called
 with a _valid index_ less than the vector's size
 
-```flux
+*/
+
+
+
 impl<T> RVec<T> {
     #[spec(fn(&RVec<T>[@n], i: usize{i < n}) -> &T)]
     pub fn get(&self, i: usize) -> &T {
@@ -297,7 +361,10 @@ impl<T> RVec<T> {
         &mut self.inner[i]
     }
 }
-```
+
+
+
+/*
 
 // <!-- SLIDE -->
 
@@ -313,7 +380,10 @@ due course, once we learn about traits and associated
 refinements in @ch:08_traits.]
 ])
 
-```flux
+*/
+
+
+
 fn sum_vec(vec: &RVec<i32>) -> i32 {
     let mut res = 0;
     let mut i = 0;
@@ -323,7 +393,10 @@ fn sum_vec(vec: &RVec<i32>) -> i32 {
     }
     res
 }
-```
+
+
+
+/*
 
 // <!-- SLIDE -->
 
@@ -335,7 +408,10 @@ Instead lets implement the `Index` and `IndexMut`
 traits for `RVec` which allows us to use the `[..]`
 operator to access elements
 
-```flux
+*/
+
+
+
 impl<T> std::ops::Index<usize> for RVec<T> {
     type Output = T;
     #[spec(fn(&RVec<T>[@n], i:usize{i < n}) -> &T)]
@@ -350,7 +426,10 @@ impl<T> std::ops::IndexMut<usize> for RVec<T> {
         self.get_mut(index)
     }
 }
-```
+
+
+
+/*
 
 // <!-- SLIDE -->
 
@@ -358,7 +437,10 @@ impl<T> std::ops::IndexMut<usize> for RVec<T> {
 
 Now the above `vec_sum` example looks a little nicer
 
-```flux
+*/
+
+
+
 fn sum_vec_fixed(vec: &RVec<i32>) -> i32 {
     let mut res = 0;
     let mut i = 0;
@@ -368,7 +450,10 @@ fn sum_vec_fixed(vec: &RVec<i32>) -> i32 {
     }
     res
 }
-```
+
+
+
+/*
 
 // <!-- SLIDE -->
 
@@ -377,7 +462,10 @@ fn sum_vec_fixed(vec: &RVec<i32>) -> i32 {
 Lets put the whole API to work in this "memoized" version of the fibonacci
 function which uses a vector to store the results of previous calls
 
-```flux
+*/
+
+
+
 pub fn fib(n: usize) -> i32 {
     let mut r = RVec::new();
     let mut i = 0;
@@ -395,7 +483,10 @@ pub fn fib(n: usize) -> i32 {
     }
     r.pop()
 }
-```
+
+
+
+/*
 
 #alert("success", [
 *EXERCISE:* Flux is unhappy with the `pop` at the end of the function
@@ -425,7 +516,10 @@ As a last example, lets look at a simplified version of the
 #link("https://doc.rust-lang.org/src/core/slice/mod.rs.html#2423-2425")[`binary_search` method from `std::vec`], into which
 we've snuck a tiny little bug
 
-```flux
+*/
+
+
+
 pub fn binary_search(vec: &RVec<i32>, x: i32) -> Result<usize, usize> {
     let mut size = vec.len();
     let mut left = 0;
@@ -444,7 +538,10 @@ pub fn binary_search(vec: &RVec<i32>, x: i32) -> Result<usize, usize> {
     }
     Err(left)
 }
-```
+
+
+
+/*
 
 Flux complains in _two_ places
 
@@ -489,3 +586,4 @@ type machinery to build up compound structures and APIs from
 simple ones, as we will see when we use `RVec` to implement
 sparse matrices in @ch:11_sparse, and
 a small neural network library in @ch:12_neural.
+*/

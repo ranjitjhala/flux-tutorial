@@ -1,13 +1,20 @@
+/*
 #import "../orly-modified.typ": alert
 
 = Refining Enums <ch:04_enums>
 
-```fluxhidden
+*/
+
+
+
 #![allow(unused)]
 extern crate flux_rs;
 use flux_rs::attrs::*;
 use flux_rs::assert;
-```
+
+
+
+/*
 
 Previously in @ch:03_structs we saw how to refine structs to constrain the space
 of legal values, for example, to define a `Positivei32` or a `Range` `struct` where
@@ -41,7 +48,10 @@ To do so, lets define a custom `Option` type
 ] that is indexed by a `bool` which indicates whether or not the option is
 valid (i.e. `Some` or `None`):
 
-```flux
+*/
+
+
+
 #[refined_by(valid: bool)]
 pub enum Option<T> {
     #[variant((T) -> Option<T>[{valid: true}])]
@@ -49,7 +59,10 @@ pub enum Option<T> {
     #[variant(Option<T>[{valid: false}])]
     None,
 }
-```
+
+
+
+/*
 
 As with `std::option::Option`, we have two variants
 
@@ -76,7 +89,10 @@ could have equivalently written `Option<T>[true]`
 and `Option<T>[false]` above.
 ])
 
-```flux
+*/
+
+
+
 #[spec(fn () -> Option<i32>[true])]
 fn test_some() -> Option<i32> {
   Option::Some(12)
@@ -86,7 +102,10 @@ fn test_some() -> Option<i32> {
 fn test_none() -> Option<i32> {
   Option::None
 }
-```
+
+
+
+/*
 
 // <!-- SLIDE -->
 
@@ -96,7 +115,10 @@ The neat thing about refining variants is that _pattern matching_
 on the `enum` tells Flux what the variant's refinements are.
 For example, consider the following implementation of `is_some`
 
-```flux
+*/
+
+
+
 impl<T> Option<T> {
   #[spec(fn(&Self[@valid]) -> bool[valid])]
   pub fn is_some(&self) -> bool {
@@ -106,7 +128,10 @@ impl<T> Option<T> {
     }
   }
 }
-```
+
+
+
+/*
 
 If you look at the code for `is_some` in the Flux view, you will see that
 in the `Some(_)` branch, Flux additionally knows the *Constraint* that
@@ -135,13 +160,19 @@ Typically we mark those cases with an `unreachable!()` call.
 With Flux, we can _prove_, at compile-time,
 that those cases will never, in fact, be executed.
 
-```flux
+*/
+
+
+
 #[spec(fn () -> _ requires false)]
 fn unreachable() -> ! {
     assert(false);  // flux will prove this is unreachable
     unreachable!(); // panic if we ever get here
 }
-```
+
+
+
+/*
 
 #alert("info", [
 *TIP:* Usually, we write the _preconditions_ on the input values
@@ -156,19 +187,28 @@ For example, we can test that `unreachable` is indeed unreachable
 by writing a little function that calls it, but only under impossible
 conditions
 
-```flux
+*/
+
+
+
 fn test_unreachable_if(n: usize) {
   let x = 12 + n;
   if x < 12 {
     unreachable(); // impossible as 12 <= x
   }
 }
-```
+
+
+
+/*
 
 In fact, `rustc` translates `if` statements roughly into the equivalent of the below
 code using `match`
 
-```flux
+*/
+
+
+
 fn test_unreachable_match(n: usize) {
   let x = 12 + n;
   let b = x < 12;
@@ -177,7 +217,10 @@ fn test_unreachable_match(n: usize) {
     false => ()
   }
 }
-```
+
+
+
+/*
 
 If you look at the Flux view of `test_unreachable_if` or `test_unreachable_match`
 you will see what Flux knows in each branch or `match` arm:
@@ -225,7 +268,10 @@ report an error.
 
 Lets use our refined `Option` to implement a safe `unwrap` function.
 
-```flux
+*/
+
+
+
 impl<T> Option<T> {
   #[spec(fn(Self[true]) -> T)]
   pub fn unwrap(self) -> T {
@@ -235,7 +281,10 @@ impl<T> Option<T> {
     }
   }
 }
-```
+
+
+
+/*
 
 The `spec` requires that `unwrap` is _only_ called
 with an `Option` whose (`valid`) index is `true`,
@@ -268,7 +317,10 @@ to safely `unwrap`.
 
 Here's a safe divide-by-zero function that returns an `Option<i32>`
 
-```flux
+*/
+
+
+
 #[spec(fn(n:i32, k:i32) -> Option<i32>)]
 pub fn safe_divide(n: i32, k: i32) -> Option<i32> {
   if k > 0 {
@@ -277,7 +329,10 @@ pub fn safe_divide(n: i32, k: i32) -> Option<i32> {
     Option::None
   }
 }
-```
+
+
+
+/*
 
 #alert("success", [
 *EXERCISE:* Why does the test below fail to type check?
@@ -285,11 +340,17 @@ Can you fix the `spec` for `safe_divide` so Flux is happy
 with `test_safe_divide`?
 ])
 
-```flux
+*/
+
+
+
 fn test_safe_divide() -> i32 {
     safe_divide(10, 2).unwrap()
 }
-```
+
+
+
+/*
 
 // <!-- SLIDE -->
 
@@ -298,7 +359,10 @@ fn test_safe_divide() -> i32 {
 Recall the `struct Positivei32` from @ch:03_structs:positive-integers
 and the smart constructor we wrote for it.
 
-```flux
+*/
+
+
+
 #[refined_by(n: int)]
 #[invariant(n > 0)]
 struct Positivei32 {
@@ -316,7 +380,10 @@ impl Positivei32 {
     }
   }
 }
-```
+
+
+
+/*
 
 #alert("success", [
 *EXERCISE:* The code below has a function that
@@ -327,11 +394,17 @@ out how to fix the `spec` of `new` so that `test_new_unwrap`
 is accepted?
 ])
 
-```flux
+*/
+
+
+
 fn test_new_unwrap() {
     Positivei32::new(10).unwrap();
 }
-```
+
+
+
+/*
 
 // <!-- SLIDE -->
 
@@ -356,7 +429,10 @@ be set to `Inactive` when `n < 1`.
 To do so, lets define the `Timer`, refined with an `int` index that tracks
 the number of remaining seconds.
 
-```flux
+*/
+
+
+
 #[refined_by(remaining: int)]
 enum Timer {
     #[variant(Timer[0])]
@@ -365,7 +441,10 @@ enum Timer {
     #[variant((usize[@n]) -> Timer[n])]
     CountDown(usize)
 }
-```
+
+
+
+/*
 
 The flux definitions ensure that `Timer` has two variants
 
@@ -378,7 +457,10 @@ The flux definitions ensure that `Timer` has two variants
 
 We can now implement the `Timer` with a constructor and a method to set it to `Inactive`.
 
-```flux
+*/
+
+
+
 impl Timer {
     #[spec(fn (n: usize) -> Timer[n])]
     pub fn new(n: usize) -> Self {
@@ -390,7 +472,10 @@ impl Timer {
         *self = Timer::Inactive
     }
 }
-```
+
+
+
+/*
 
 // <!-- SLIDE -->
 
@@ -398,7 +483,10 @@ impl Timer {
 
 Now, Flux will only let us `deactivate` a timer whose countdown is at `0`.
 
-```flux
+*/
+
+
+
 fn test_deactivate() {
   let mut t0 = Timer::new(0);
   t0.deactivate(); // verifies
@@ -406,7 +494,10 @@ fn test_deactivate() {
   let mut t3 = Timer::new(3);
   t3.deactivate(); // rejected
 }
-```
+
+
+
+/*
 
 The above code produces an error because `t3` has the type `Timer[3]`
 
@@ -442,7 +533,10 @@ Here is a function to `tick` the timer down by one second.
 
 // <!-- // #[spec(fn (self: &mut Self[@s]) ensures self: Self[if n > 1 then n-1 else 0])] -->
 
-```flux
+*/
+
+
+
 impl Timer {
   #[spec(fn (self: &mut Self[@s]) ensures self: Self)]
   fn tick(&mut self) {
@@ -457,13 +551,19 @@ impl Timer {
     }
   }
 }
-```
+
+
+
+/*
 
 #alert("success", [
 *EXERCISE:* Can you fix the `spec` for `tick` so that Flux accepts `test_tick`?
 ])
 
-```flux
+*/
+
+
+
 fn test_tick() {
   let mut t = Timer::new(3);
   t.tick();       // should decrement to 2
@@ -471,7 +571,10 @@ fn test_tick() {
   t.tick();       // should decrement to 0
   t.deactivate(); // should set to Inactive
 }
-```
+
+
+
+/*
 
 == Summary
 
@@ -485,3 +588,4 @@ only `deactivate` when the timer has expired. You can do other fun things, like
 - track the #link("https://github.com/flux-rs/flux/blob/main/tests/tests/pos/enums/list01.rs")[set of elements] in the list, or
 - determine whether an expression is in normal form (@ch:09_anf), or
 - ensure the layers of a neural network are composed correctly (@ch:12_neural).
+*/

@@ -154,12 +154,6 @@
 
 #show std.link: it => text(fill: blue, underline(it))
 
-= Introduction
-
-Fixing a hole where the rain gets in.
-
-#lorem(30)
-
 #include("typ/ch01_refinements.typ")
 #include("typ/ch02_ownership.typ")
 #include("typ/ch03_structs.typ")
@@ -168,5 +162,7 @@ Fixing a hole where the rain gets in.
 #include("typ/ch06_consts.typ")
 #include("typ/ch07_externs.typ")
 #include("typ/ch08_traits.typ")
-#include("typ/ch10_anf.typ")
+#include("typ/ch09_anf.typ")
+#include("typ/ch10_scope.typ")
+#include("typ/ch11_sparse.typ")
 #include("typ/ch12_neural.typ")
