@@ -28,9 +28,23 @@
   date: datetime.today(),
   url: "https://flux-rs.github.io",
   abstract: [
-    #lorem(50)
-  ],
+Flux is a refinement type checker plugin for Rust that lets
+you specify a range of correctness properties and have them
+be verified at compile time.
+//
+Flux works by extending Rust's types with logical assertions
+describing additional correctness requirements that are checked
+during compilation.
+//
+This lets us eliminate various classes of run-time problems,
+from arithmetic underflows or overflows, to out-of-bounds
+array accesses, to application-specific assertions and invariants
+about business logic.
+//
+This is a tutorial about how to write Rust with refinement types.
+],
 )
+
 
 // Set global heading numbering to use arabic numbers
 #set heading(numbering: "1.1")

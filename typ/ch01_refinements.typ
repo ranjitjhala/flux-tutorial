@@ -21,12 +21,12 @@ constraints that specify additional correctness requirements
 that can be verified at compile-time, thereby entirely
 eliminating various classes of run-time problems.
 //
-Lets see how flux lets you refine basic or primitive
+Lets see how Flux lets you refine basic or primitive
 types like `i32` or `usize` or `bool` with logical constraints that
 can be checked at compile time.
 
 #alert("info", [
-  *Flux Specifications:* First off, we need to add some incantations that pull in the mechanisms for writing Flux specifications as Rust attributes.
+  *Flux Attributes:* First off, we need to add some incantations that pull in the mechanisms for writing Flux specifications as Rust attributes.
   This is done by importing the `flux_rs` crate and the `flux_rs::attrs` module.
 ])
 
