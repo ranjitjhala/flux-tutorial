@@ -162,6 +162,9 @@
 #include("typ/ch06_consts.typ")
 #include("typ/ch07_externs.typ")
 #include("typ/ch08_traits.typ")
+
+// --------------------------------------------------------
+
 #include("typ/ch09_anf.typ")
 #include("typ/ch10_scope.typ")
 #include("typ/ch11_sparse.typ")

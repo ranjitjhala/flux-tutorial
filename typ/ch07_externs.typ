@@ -89,8 +89,8 @@ it knows that at the call-site, `vx` and `vy` are respectively `5` and `10`.
 
 There are two things you should note about the `extern_spec` specification.
 
-1. First, we imported the `extern_spec` macro from the `flux_rs` crate,
-2. Second, we did not write an implementation for the function.
+1. First, we _imported_ the `extern_spec` macro from the `flux_rs` crate,
+2. Second, we did not _implement_ the function.
 
 Crucially, the implementation for `swap` is going to be taken
 from `std::mem`. Here, we are simply telling Flux to use the
@@ -114,9 +114,9 @@ fn first(slice: &[u32]) -> Option<u32> {
 ```
 
 #alert("success", [
-*EXERCISE:* Unfortunately, flux does not know what `slice.len()` returns, and
-so, cannot verify that the access `slice[0]` is safe! Can you help
-it by fixing the `extern_spec` for the method shown below?
+*EXERCISE:* Unfortunately, Flux does not know what `slice.len()` returns.
+So, it cannot verify that the access `slice[0]` is safe! Can you help
+it by _fixing_ the `extern_spec` for the method shown below?
 You might want to refresh your memory about the meaning of
 `&[T][@n]` by quickly skimming @ch:06_consts:refined-compile-time-safety
 on the sizes of arrays and slices.
@@ -132,21 +132,26 @@ impl<T> [T] {
 
 == Extern Specs for Enums: `Option`
 
-In the [chapter on enums](./04-enums.html) we saw how you can
-refine `enum` types with extra indices that track extra information
-about the underlying value. For example, we saw how to implement
-a refined Option in @ch:04_enums:refined-option, that is indexed
-by a boolean that tracks whether the value is either
+In @ch:04_enums on enums we saw how you can refine `enum`
+types with extra indices that track extra information about
+the underlying value.
+//
+For example, we saw how to implement
+a refined Option in @ch:04_enums:refined-option,
+that is indexed by a boolean that tracks whether
+the value is either
+
 - `Some` and hence, safe to `unwrap`, or
 - `None`, which cannot be `unwrap`ped.
 
 The `extern_spec` mechanism lets us do the same thing, but directly on
-`std::option::Option`. To do so we need only
+`std::option::Option`. To do so we need only write extern-specs for
 
-1. write extern-specs for the _enum definition_ that add the indices
+1. the _enum definition_ that add the indices
    and connect them to the variant constructors,
-2. write extern-specs for the _method signatures_ that let us use the
-   indices to describe a refined API that is used to check client code.
+2. the _method signatures_ that let us use the
+   indices to describe a refined API that is
+   used to check client code.
 
 === Extern Specs for the Type Definition
 
@@ -163,15 +168,15 @@ enum Option<T> {
 }
 ```
 
-As you might have noticed, this bit is *identical*
+As you might have noticed, this bit is identical
 to the refined version of `Option` that we saw in
 @ch:04_enums:refined-option, except for the
 `#[extern_spec]` topping.
 
 === Using the Type Definition
 
-Adding the above "retrofits" the `bool` index directly
-into the `std::option::Option` type. So, for example
+Adding the above retrofits the `bool` index onto
+the `std::option::Option` type. So, for example
 we can write
 
 ```flux
@@ -186,8 +191,8 @@ fn test_none() -> Option<i32> {
 }
 ```
 
-#alert("info", [)
-*TIP:* When there is a single field like `valid`
+#alert("info", [
+*TIP:* Recall that when there is a single field like `valid`
 you can drop it, and just write `Option<i32>[true]`
 or `Option<i32>[false]`.
 ])
@@ -222,8 +227,8 @@ the standard library.
 
 Notice that the spec for
 
-- `is_some` returns `true` if the input `Option` was indeed `valid`, i.e. was a `Some(..)`;
-- `is_none` returns `true` if the input `Option` was *not* `valid`, i.e. was a `None`.
+- `is_some` returns `true` if the input `Option` _is_ `valid`, i.e. was a `Some(..)`;
+- `is_none` returns `true` if the input `Option` _is not_ `valid`, i.e. was a `None`.
 
 === Using Extern Method Specifications
 
@@ -241,7 +246,7 @@ fn test_opt_specs(){
 === Safely Unwrapping
 
 Of course, we all know that we _shouldn't_ directly use `unwrap`.
-However, sometimes, its ok, if we somehow *know* that the value
+However, sometimes, its ok, if we somehow know that the value
 is indeed a valid `Some(..)`. The refined type for `unwrap` keeps
 us honest with a _precondition_ that tells flux that it should
 only be invoked when the underlying `Option` can be provably `valid`.
@@ -262,14 +267,13 @@ fn test_unwrap() -> u8 {
 ```
 
 #alert("success", [
-*EXERCISE:* The function `test_unwrap` above
-merrily `unwrap`s the result of the call `into_u8`.
-Flux is unhappy and flags an error even though surely
-the call will not panic! The trouble is that the "default"
-`spec` for `into_u8` -- the Rust type -- says it can
-return *any* `Option<i32>`, including those that might
-well blow up `unwrap`. Can you fix the `spec` for `into_u8`
-so that flux verifies `test_unwrap`?
+*EXERCISE:* The function `test_unwrap` above merrily `unwrap`s the
+result of the call `into_u8`. Flux is unhappy and flags an error
+even though surely the call will not panic! The trouble is that
+the "default" `spec` for `into_u8`, namely, the Rust type, says
+it can return _any_ `Option<i32>`, including those that might
+well blow up `unwrap`. Can you _fix_ the `spec` for `into_u8`
+so that Flux verifies `test_unwrap`?
 ])
 
 === A Safe Division Function
@@ -305,10 +309,11 @@ pub fn test_safe_div() {
 
 == Extern Specs for Structs: `Vec`
 
-Previously, we saw how to define a *new* type `RVec<T>`
-for [refined vectors](./05-vectors.html) and to write
+Previously, in @ch:05_vectors, we saw how to define
+a _new_ type `RVec<T>` for refined vectors and to write
 an API that let us track the vector's size, and hence
 check the safety of vector accesses at compile time.
+//
 Next, lets see how we can use `extern_spec` to implement
 (most of) the refined API directly on structs like
 `std::vec::Vec` which are defined in external crates.
@@ -329,8 +334,8 @@ struct Vec<T, A: Allocator = Global>;
 === Extern Invariants
 
 #alert("info", [
-*Extern Invariants:* Note that we can additionally attach *invariants*
-to the `struct`definition, which correspond to facts that are _always_
+*Extern Invariants:* Note that we can additionally attach _invariants_
+to the `struct` definition, which correspond to facts that are _always_
 true about the indices, for example, that the `len` of a `Vec` is
 always non-negative.
 ])
@@ -338,12 +343,12 @@ always non-negative.
 === Extern `struct`s are Opaque
 
 Unlike with `enum`, the `extern_spec` is oblivious
-to the _internals_ of the `struct`. That is flux
-assumes that the fields are all "private", and so the
+to the _internals_ of the `struct`. That is Flux
+assumes that the fields are "private", and so the
 refinements must be tracked solely using the _methods_
 used to construct and manipulate the `struct`.
 
-The simplest of these is the one that births an *empty* `Vec`
+The simplest of these is the one that births an empty `Vec`
 
 ```flux
 #[extern_spec]
@@ -369,13 +374,13 @@ like `push`, `pop`, `len` and so on.
 
 We might be tempted to just bundle them together with `new`
 in the `impl` above, but it is important to Flux that the
-the `extern_spec` implementations _mirror the original
-implementations_ so that Flux can accurately match
+the `extern_spec` implementations _mirror_ the original
+implementations so that Flux can accurately match
 the `extern_spec` method with the original method,
 and hence, _attach_ the specification to uses of the
 original method.
 
-As it happens, `push` and `pop` are defined in a *separate*
+As it happens, `push` and `pop` are defined in a separate
 `impl` block, parameterized by a generic `A: Allocator`, so
 our `extern_spec` mirrors this block:
 
@@ -485,17 +490,16 @@ fn pop_and_unwrap<T>(vec: &mut Vec<T>) -> T {
 
 #alert("success", [
 *EXERCISE:* Flux chafes because the spec for `pop` is too _weak_:
-above does not tell us _when_ the returned value is safe to unwrap.
-Can you go back and fix the spec for `fn pop` so that `pop_and_unwrap`
+it does not tell us _when_ the returned value is safe to unwrap.
+Can you go back and fix the spec for `pop` so that `pop_and_unwrap`
 verifies?
 ])
 
 === PopPop!
 
 #alert("success", [
-*EXERCISE:* Finally, as a parting exercise, can you work out
-why flux rejects the `pop2` function below, and modify the spec
-so that it is accepted?
+*EXERCISE:* Why does Flux reject `pop2` shown below? Can you modify
+the spec so that it is accepted?
 ])
 
 ```flux
@@ -511,13 +515,13 @@ fn pop2<T>(vec: &mut Vec<T>) -> (T, T)  {
 == Summary
 
 Previously, we saw how to attach refined specifications for
-[functions](./01-refinements.html), [structs](03-structs.html)
-and [enums](04-enums.html).
-
+functions (in @ch:01_refinements), structs (in @ch:03_structs)
+and enums (in @ch:04_enums).
+//
 In this chapter, we saw that you can use the `extern_spec`
 mechanism to do the same things for objects defined elsewhere,
 e.g. in external crates being used by your code.
-
-Next, we'll learn how to use `extern_spec` to refine _traits_
-(and their implementations), which is key to checking idiomatic
+//
+Next, lets see how to use `extern_spec` to refine _traits_
+and their implementations, which is key to checking idiomatic
 Rust code.

@@ -218,7 +218,7 @@ pub fn decr(p: &mut i32) {
 Flux complains that
 
 ```
-error[FLUX]: assignment might be unsafe
+error[0999]: assignment might be unsafe
    |
 13 |         *p = *p - 1;
    |         ^^^^^^^^^^^
