@@ -28,9 +28,11 @@ we don't create arrays of the wrong size, or access them out of bounds.
 For example, `rustc` will grumble if you try to make a `Pixel` with 4 elements:
 
 ```rust
+error[E0308]: mismatched types
    |
 52 | let pix2 : Pixel = [0,0,0,0];
-   |            -----   ^^^^^^^^^ expected an array with a fixed size of 3 elements, found one with 4 elements
+   |            -----   ^^^^^^^^^ expected an array of 3 elements,
+   |            |                 found one with 4 elements
    |            |
    |            expected due to this
 ```
@@ -38,6 +40,7 @@ For example, `rustc` will grumble if you try to make a `Pixel` with 4 elements:
 Similarly, `rustc` will wag a finger if you try to access a `Pixel` at an invalid index.
 
 ```rust
+error: this operation will panic at runtime
    |
 54 | let b0 = pix0[3];
    |          ^^^^^^^ index out of bounds: length is 3 but index is 3
@@ -124,6 +127,7 @@ This is very convenient because `rustc` will prevent us from calling `dot` with
 arrays of different sizes, for example we get a compile-time error
 
 ```rust
+error[E0308]: mismatched types
    |
 68 |     dot([1.0, 2.0], [3.0, 4.0, 5.0]);
    |     ---             ^^^^^^^^^^^^^^^ expected an array with a fixed size of 2 elements, found one with 3 elements
@@ -179,7 +183,7 @@ fn dot_k<const N:usize>(x: [f32;N], y: [f32;N], k: usize) -> f32 {
 ```
 
 #figure(
-    image("../img/04-arrays-dotk-permissive.gif", width:90%),
+    image("../img/04-arrays-dotk-permissive.gif", width:83%),
     caption: [A permissive version of `dot_k` that always works],
 )
 
@@ -197,13 +201,11 @@ fn dot_k<const N:usize>(x: [f32;N], y: [f32;N], k: usize) -> f32 {
 ```
 
 #alert("success", [
-*EXERCISE:* Do you understand why in the code below
-1. Adding the type signature moved the error from the body of `dot_k` into the call-site inside `test`?
-2. Then editing `test` to call `dot_k` with `k=2` fixed the error?
+*EXERCISE:* Do you understand why in the code below (1)adding the type signature moved the error from the body of `dot_k` into the call-site inside `test`, and then (2) editing `test` to call `dot_k` with `k=2` _fixed_ the error?
 ])
 
 #figure(
-    image("../img/04-arrays-dotk-strict.gif", width:100%),
+    image("../img/04-arrays-dotk-strict.gif", width:83%),
     caption: [A strict version of `dot_k` that requires `k <= N`],
 )
 

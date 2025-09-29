@@ -135,7 +135,7 @@ impl<T> Option<T> {
 
 If you look at the code for `is_some` in the Flux view, you will see that
 in the `Some(_)` branch, Flux additionally knows the *Constraint* that
-`valid` is `true`, and in the `None` branch, it knows that `valid` is `false`.
+`valid == true`, and in the `None` branch, it knows that `valid == false`.
 
 #figure(
   grid(

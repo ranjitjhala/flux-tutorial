@@ -1,7 +1,7 @@
 /*
 #import "../orly-modified.typ": alert
 
-= Opaque Types
+= Opaque Types <ch:05_vectors>
 
 */
 

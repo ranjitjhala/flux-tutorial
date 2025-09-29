@@ -6,6 +6,14 @@ import Data.List (isPrefixOf)
 import Text.Printf (printf)
 
 
+convertStackedFigures :: String -> String
+convertStackedFigures = unlines . concatMap convertLine .  lines
+  where
+    convertLine :: String -> [String]
+    convertLine s
+      | "| <img src" `isPrefixOf` s = ["||", s]
+      | otherwise                   = [s]
+
 convertChapterLinks :: String -> String
 convertChapterLinks = concatMap convertWord . tokenize
 
@@ -49,7 +57,7 @@ tokenize s@(c:_)
                   in nonWs : tokenize rest
 
 convert :: String -> String
-convert = convertCodeBlocks . convertChapterLinks
+convert = convertStackedFigures . convertCodeBlocks . convertChapterLinks
 
 main :: IO ()
 main = do

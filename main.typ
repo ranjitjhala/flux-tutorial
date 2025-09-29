@@ -5,6 +5,7 @@
 
 #show: mantys(
   name: "flux-book",
+  show-index: false,
   version: "1.0.0",
   authors: (
     "Ranjit Jhala",
