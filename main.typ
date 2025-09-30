@@ -48,36 +48,8 @@ This is a tutorial about how to write Rust with refinement types.
 
 
 // Set global heading numbering to use arabic numbers
-// #set heading(numbering: "1.1")
-
-#set heading(numbering: (..nums) => {
-  let level = nums.pos().len()
-  if level == 1 {
-    // Chapter level - start from 0
-    str(nums.pos().at(0) - 1)
-  } else if level == 2 {
-    // Section level - Chapter.Section
-    str(nums.pos().at(0) - 1) + "." + str(nums.pos().at(1))
-  } else {
-    // Deeper levels - Chapter.Section.Subsection...
-    let chapter = str(nums.pos().at(0) - 1)
-    let rest = nums.pos().slice(1).map(str).join(".")
-    chapter + "." + rest
-  }
-})
-
-
-// // Special handling for Index heading - no numbering
-// #show heading: it => {
-//   if it.body == [Index] {
-//     // Remove numbering for Index heading
-//     set heading(numbering: none)
-//     it
-//   } else {
-//     // Use default numbering for other headings
-//     it
-//   }
-// }
+#set heading(numbering: "1.1")
+#counter(heading).update(0)
 
 // Reset figure counter for each chapter
 #show heading.where(level: 1): it => {
