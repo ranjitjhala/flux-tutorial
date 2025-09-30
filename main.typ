@@ -48,8 +48,10 @@ This is a tutorial about how to write Rust with refinement types.
 
 
 // Set global heading numbering to use arabic numbers
-#set heading(numbering: "1.1")
-#counter(heading).update(0)
+#set heading(numbering: (..x) => numbering("1.1", ..x.pos().map(n => n - 1)))
+
+// #set heading(numbering: "1.")
+
 
 // Reset figure counter for each chapter
 #show heading.where(level: 1): it => {
@@ -59,7 +61,7 @@ This is a tutorial about how to write Rust with refinement types.
 
 // Style figure captions with chapter-based numbering
 #show figure: it => {
-  let chapter-num = counter(heading).get().first()
+  let chapter-num = counter(heading).get().first() - 1
   let fig-num = counter(figure).get().first()
 
   block[
@@ -75,16 +77,16 @@ This is a tutorial about how to write Rust with refinement types.
   let el = it.element
   if el != none and el.func() == figure {
     // Get the chapter number at the figure's location
-    let chapter-num = counter(heading).at(el.location()).first()
+    let chapter-num = counter(heading).at(el.location()).first() - 1
     // Get the figure number within that chapter
     let fig-num = counter(figure).at(el.location()).first()
-    // Display as "Chapter.Figure" (e.g., "2.1")
+    // Display as "Chapter.Figure" (e.g., "0.1")
     link(el.location())[Figure #chapter-num.#fig-num]
   } else if el != none and el.func() == heading {
     // Handle heading references
     if el.level == 1 {
       // Level 1 headings are chapters
-      let chapter-num = counter(heading).at(el.location()).first()
+      let chapter-num = counter(heading).at(el.location()).first() - 1
       link(el.location())[Chapter #chapter-num]
     } else {
       // Other levels use default behavior

@@ -1,4 +1,3 @@
-
 #import "@preview/fauxreilly:0.1.1": orly
 
 
@@ -143,10 +142,12 @@
             // }
 
             let ctr = counter(std.heading).get();
-            let chapter = if ctr.at(0) == 0 {
-                ""
+            let ctr0 = ctr.at(0);
+            let chapter = if ctr0 == 0 {
+              ""
             } else {
-                counter(std.heading).display("1") + " "
+              str(ctr0 - 1) + "  "
+              // counter(std.heading).display("1") + " "
             };
             set std.text(fill: primary, size: 2em)
             chapter + it.body
@@ -158,7 +159,10 @@
         block({
           set std.text(fill: secondary)
           if it.numbering != none and level <= 2 {
-            counter(std.heading).display("1.1")
+            let ctr = counter(std.heading).get()
+            let chapter-num = ctr.at(0) - 1
+            let section-num = ctr.at(1)
+            str(chapter-num) + "." + str(section-num)
             h(1.8em)
           }
           it.body

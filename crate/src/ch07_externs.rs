@@ -10,9 +10,19 @@
 #![feature(allocator_api)]
 #![allow(unused)]
 extern crate flux_rs;
-use flux_rs::{attrs::*, extern_spec, assert};
+use flux_rs::{attrs::*, assert};
 use std::alloc::{Allocator, Global};
 use std::mem::swap;
+
+
+
+/*
+
+*/
+
+
+
+use flux_rs::extern_spec;
 
 
 
@@ -460,8 +470,8 @@ fn test_new() -> Vec<i32> {
 
 === Extern Specs for Impl Methods
 
-Lets beef up our refined `Vec` API with a few more methods
-like `push`, `pop`, `len` and so on.
+Lets fatten our refined `Vec` API with a few more methods
+like `push`, `pop`, `len` _etc._
 
 We might be tempted to just bundle them together with `new`
 in the `impl` above, but it is important to Flux that the
@@ -472,7 +482,7 @@ and hence, _attach_ the specification to uses of the
 original method.
 
 As it happens, `push` and `pop` are defined in a separate
-`impl` block, parameterized by a generic `A: Allocator`, so
+`impl` block parameterized by a generic `A: Allocator`, so
 our `extern_spec` mirrors this block:
 
 */

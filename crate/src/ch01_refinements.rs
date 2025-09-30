@@ -3,26 +3,8 @@
 
 = Refining Types <ch:01_refinements>
 
-Types bring order to code. For example, if a variable `i` has
-type `usize` then we know that `i` is a number that can be used
-to index a vector. Similarly, if `names` has type `Vec<&str>`
-then we can be certain that `names` is a collection of strings
-which may _be_ indexed but of course, not used _as_ an index.
-//
-However, by itself, `usize` does not tell us how _big_ the number is,
-or whether it may safely be used to index into `names`.
-//
-The programmer must still rely on their own wits, lots of tests, and
-a dash of optimism, to ensure that all the different bits fit properly
-at run-time.
 
-#link("https://arxiv.org/abs/2010.07763")[Refinements] are a
-promising new way to extend type checkers with _logical_
-constraints that specify additional correctness requirements
-that can be verified at compile-time, thereby entirely
-eliminating various classes of run-time problems.
-//
-Lets see how Flux lets you refine basic or primitive
+Lets begin by seeing how Flux lets you refine basic or primitive
 types like `i32` or `usize` or `bool` with logical constraints that
 can be checked at compile time.
 
@@ -102,7 +84,7 @@ says that the value _returned_ by `mk_ten` must, in fact, be `10`
 
 #[spec(fn() -> i32[10])]
 pub fn mk_ten() -> i32 {
-    5 + 5
+    5 + 4
 }
 
 
@@ -160,7 +142,7 @@ The specification for `assert` says you can only call it with the input `true`. 
 
 fn test_assert(){
   assert(2 + 2 == 4);
-  assert(2 + 2 == 4); // fails to type check
+  assert(2 + 2 == 5); // fails to type check
 }
 
 
@@ -335,7 +317,7 @@ fn add_points(s: usize, k: usize) -> usize {
 }
 fn test_add_points() {
     assert(add_points(20, 30) == 50);
-    assert(add_points(90, 3) == 93); // fails to type check
+    assert(add_points(90, 30) == 120); // fails to type check
 }
 
 
