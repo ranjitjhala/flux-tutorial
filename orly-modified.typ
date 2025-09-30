@@ -9,8 +9,8 @@
 
 
 #let fonts = (
-  serif: ("TeX Gyre Schola", "Liberation Serif"),
-  sans: ("TeX Gyre Heros", "Open Sans Condensed", "Open Sans", "Liberation Sans", "Helvetica Neue", "Helvetica"),
+  serif: ("Palatino", "TeX Gyre Schola", "Liberation Serif"),
+  sans: ("Optima"),
   mono: ("TeX Gyre Cursor", "Liberation Mono"),
 )
 
@@ -26,7 +26,7 @@
 )
 
 #let heading = (
-  font: fonts.serif,
+  font: fonts.sans,
   fill: text.fill,
 )
 

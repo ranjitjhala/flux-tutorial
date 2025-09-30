@@ -8,7 +8,16 @@ incremental = true
 
 [package.metadata.flux]
 enabled = true
-# include = ["src/ch04_enums.rs"]
+include = [
+   "src/ch01_refinements.rs",
+ # "src/ch02_ownership.rs",
+ # "src/ch03_structs.rs",
+ # "src/ch04_enums.rs",
+ # "src/ch05_vectors.rs",
+ # "src/ch06_consts.rs",
+ # "src/ch07_externs.rs",
+ # "src/ch08_traits.rs",
+]
 
 [dependencies]
 # flux-rs = { git = "https://github.com/flux-rs/flux" }

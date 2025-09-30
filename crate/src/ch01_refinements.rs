@@ -102,7 +102,7 @@ says that the value _returned_ by `mk_ten` must, in fact, be `10`
 
 #[spec(fn() -> i32[10])]
 pub fn mk_ten() -> i32 {
-    5 + 4
+    5 + 5
 }
 
 
@@ -160,7 +160,7 @@ The specification for `assert` says you can only call it with the input `true`. 
 
 fn test_assert(){
   assert(2 + 2 == 4);
-  assert(2 + 2 == 5); // fails to type check
+  assert(2 + 2 == 4); // fails to type check
 }
 
 
@@ -335,7 +335,7 @@ fn add_points(s: usize, k: usize) -> usize {
 }
 fn test_add_points() {
     assert(add_points(20, 30) == 50);
-    assert(add_points(90, 30) == 120); // fails to type check
+    assert(add_points(90, 3) == 93); // fails to type check
 }
 
 

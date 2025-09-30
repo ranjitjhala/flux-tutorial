@@ -24,7 +24,7 @@
     title-image: image("img/flux.png", height: auto),
   ),
   wrap-snippets: true,
-  title: "Verify Rust with Flux",
+  title: "Verifying Rust with Flux",
   subtitle: "Programming Rust with Refinement Types",
   date: datetime.today(),
   url: "https://flux-rs.github.io",
@@ -48,7 +48,24 @@ This is a tutorial about how to write Rust with refinement types.
 
 
 // Set global heading numbering to use arabic numbers
-#set heading(numbering: "1.1")
+// #set heading(numbering: "1.1")
+
+#set heading(numbering: (..nums) => {
+  let level = nums.pos().len()
+  if level == 1 {
+    // Chapter level - start from 0
+    str(nums.pos().at(0) - 1)
+  } else if level == 2 {
+    // Section level - Chapter.Section
+    str(nums.pos().at(0) - 1) + "." + str(nums.pos().at(1))
+  } else {
+    // Deeper levels - Chapter.Section.Subsection...
+    let chapter = str(nums.pos().at(0) - 1)
+    let rest = nums.pos().slice(1).map(str).join(".")
+    chapter + "." + rest
+  }
+})
+
 
 // // Special handling for Index heading - no numbering
 // #show heading: it => {
@@ -142,7 +159,7 @@ This is a tutorial about how to write Rust with refinement types.
 
 // Add 1em vertical space after level 1 headings (chapters)
 #show heading.where(level: 1 ): it => {
-  set text(font: "Liberation Serif", size: 1em, weight: "bold")
+  set text(font: "Palatino", size: 1em, weight: "bold")
   it
   v(1em)
 }
@@ -159,16 +176,10 @@ This is a tutorial about how to write Rust with refinement types.
 }
 
 
-// Add 1em vertical space after level 1 headings (chapters)
-// #show heading.where(level: 3): it => {
-//   set text(font: "Liberation Serif", size: 1em, weight: "bold")
-//   it
-//   // v(0.1em)
-// }
-
 
 #show std.link: it => text(fill: blue, underline(it))
 
+#include("typ/ch00_introduction.typ")
 #include("typ/ch01_refinements.typ")
 #include("typ/ch02_ownership.typ")
 #include("typ/ch03_structs.typ")
