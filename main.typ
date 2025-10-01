@@ -8,7 +8,7 @@
   show-index: false,
   version: "1.0.0",
   authors: (
-    "Ranjit Jhala",
+    "Ranjit Jhala & Nico Lehmann",
   ),
   license: "MIT",
   description: "Programming Rust with Refinement Types",
