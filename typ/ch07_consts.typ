@@ -1,6 +1,6 @@
 #import "../orly-modified.typ": alert
 
-= Const Generics
+= Const Generics <ch:07_consts>
 
 // [Online demo](https://flux.goto.ucsd.edu/index.html#?demo=arrays.rs)
 
