@@ -1,7 +1,7 @@
 #import "../orly-modified.typ": alert
 
-// = Traits and Associated Refinements <ch:08_traits>
-= Refining Traits <ch:08_traits>
+// = Traits and Associated Refinements <ch:09_traits>
+= Refining Traits <ch:09_traits>
 
 ```fluxhidden
 #![allow(unused)]
@@ -73,7 +73,7 @@ fn test_first_slice() {
 
 === Catching Panics at Compile Time
 
-You might recall from @ch:06_consts:refined-compile-time-safety
+You might recall from @ch:07_consts:refined-compile-time-safety
 that Flux tracks the sizes of arrays and slices.
 //
 If you click the check button, you will see that Flux
@@ -330,7 +330,7 @@ As with the trait definition, there are two new things in our implementation of 
 *1. Implementation*
 First, we provide a concrete implementation of the _associated refinement_ `valid`.
 Recall that in flux, slices `[A]` are represented by their size (as described in
-@ch:06_consts:refined-compile-time-safety) at the refinement level.
+@ch:07_consts:refined-compile-time-safety) at the refinement level.
 Hence, the implementation of `valid` takes as parameters the `size`
 of the slice and the `index`, and returns `true` exactly if
 the `index` is less than the `size`.

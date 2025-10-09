@@ -1,6 +1,6 @@
 #import "../orly-modified.typ": alert
 
-= Opaque Types <ch:05_vectors>
+= Opaque Types <ch:06_vectors>
 
 ```fluxhidden
 #![allow(unused)]
@@ -19,11 +19,11 @@ dismay at seeing deployed code crash with messages like
 panicked at 'index out of bounds: the len is ... but the index is ...'
 ```
 
-Next, lets see how Flux's refinement (@ch:01_refinements)
-and ownership (@ch:02_ownership) mechanisms let us write
+Next, lets see how Flux's refinement (@ch:02_refinements)
+and ownership (@ch:03_ownership) mechanisms let us write
 a _refined vector_ API whose types track vector sizes and
 ensure --- at compile time --- that vector accesses cannot
-fail at runtime. Later (@ch:07_externs) we'll see how to
+fail at runtime. Later (@ch:08_externs) we'll see how to
 retrofit this API onto `std::vec::Vec` so that existing code
 can also be checked with Flux.
 
@@ -48,7 +48,7 @@ pub struct RVec<T> {
 
 === Tracking Sizes
 
-As with other structs (_.e.g._ see @ch:03_structs) we're using `refined_by`
+As with other structs (_.e.g._ see @ch:04_structs) we're using `refined_by`
 to index the `RVec` with an `int` value that will represent the vector's length.
 The idea is that
 
@@ -65,9 +65,9 @@ The `opaque` attribute tells Flux that we're not
 going to directly connect the `len` to any of
 the `RVec`'s fields' values.
 //
-This is quite _unlike_ `Positivei32` from @ch:03_structs
+This is quite _unlike_ `Positivei32` from @ch:04_structs
 where the index held the actual value of the field,
-or the `Timer` from @ch:04_enums where the index held
+or the `Timer` from @ch:05_enums where the index held
 the number of seconds left in the countdown.
 //
 Instead, with an opaque `struct` the value of
@@ -129,7 +129,7 @@ impl<T> RVec<T> {
 ```
 
 The refined type for `push` says that it takes a
-_strong reference_ (described in @ch:02_ownership:strongly-mutable-references)
+_strong reference_ (described in @ch:03_ownership:strongly-mutable-references)
 to an `RVec<T>` of size `n` and, a value `T` and ensures that upon return,
 the size of `self` is increased by `1`.
 
@@ -310,7 +310,7 @@ of an `RVec` and sums them up?
 //
 #footnote[Why not use an iterator? We will get there in
 due course, once we learn about traits and associated
-refinements in @ch:08_traits.]
+refinements in @ch:09_traits.]
 ])
 
 ```flux
@@ -487,4 +487,4 @@ the safety of all vector accesses at compile time.
 These mechanisms are _compositional_: we can use standard
 type machinery to build up compound structures and APIs from
 simple ones, as we will see when we use `RVec` to implement
-a small neural network library in @ch:11_neural.
+a small neural network library in @ch:12_neural.

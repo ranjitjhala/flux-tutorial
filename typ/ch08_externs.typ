@@ -1,6 +1,6 @@
 #import "../orly-modified.typ": alert
 
-= Extern Specs <ch:07_externs>
+= Extern Specs <ch:08_externs>
 
 ```fluxhidden
 #![feature(allocator_api)]
@@ -40,7 +40,7 @@ functions, structs, enums, traits and their implementations.
 //
 In this chapter, we'll look at the first three,
 and then we will see how the idea extends to traits
-and their implementations in @ch:08_traits.
+and their implementations in @ch:09_traits.
 
 == Extern Specs for Functions
 
@@ -101,7 +101,7 @@ from `std::mem`. Here, we are simply telling Flux to use the
 (uncommented) type specification when checking callers of `swap`.
 
 
-=== Getting the Length of a Slice <ch:07_externs:getting-the-length-of-a-slice>
+=== Getting the Length of a Slice <ch:08_externs:getting-the-length-of-a-slice>
 
 Here is a function that returns the `first` (well, `0`th)
 element of a slice of `u32`s.
@@ -122,7 +122,7 @@ fn first(slice: &[u32]) -> Option<u32> {
 So, it cannot verify that the access `slice[0]` is safe! Can you help
 it by _fixing_ the `extern_spec` for the method shown below?
 You might want to refresh your memory about the meaning of
-`&[T][@n]` by quickly skimming @ch:06_consts:refined-compile-time-safety
+`&[T][@n]` by quickly skimming @ch:07_consts:refined-compile-time-safety
 on the sizes of arrays and slices.
 ])
 
@@ -136,12 +136,12 @@ impl<T> [T] {
 
 == Extern Specs for Enums: `Option`
 
-In @ch:04_enums on enums we saw how you can refine `enum`
+In @ch:05_enums on enums we saw how you can refine `enum`
 types with extra indices that track extra information about
 the underlying value.
 //
 For example, we saw how to implement
-a refined Option in @ch:04_enums:refined-option,
+a refined Option in @ch:05_enums:refined-option,
 that is indexed by a boolean that tracks whether
 the value is either
 
@@ -174,7 +174,7 @@ enum Option<T> {
 
 As you might have noticed, this bit is identical
 to the refined version of `Option` that we saw in
-@ch:04_enums:refined-option, except for the
+@ch:05_enums:refined-option, except for the
 `#[extern_spec]` topping.
 
 === Using the Type Definition
@@ -207,7 +207,7 @@ The extern specs become especially useful when we use them to refine
 the methods that `impl`ement various key operations on `Option`s.
 
 To do so, we can make an `extern_spec` `impl` for `Option`, much like
-we did for slices, back in @ch:07_externs:getting-the-length-of-a-slice.
+we did for slices, back in @ch:08_externs:getting-the-length-of-a-slice.
 
 ```flux
 #[extern_spec]
@@ -313,7 +313,7 @@ pub fn test_safe_div() {
 
 == Extern Specs for Structs: `Vec`
 
-Previously, in @ch:05_vectors, we saw how to define
+Previously, in @ch:06_vectors, we saw how to define
 a _new_ type `RVec<T>` for refined vectors and to write
 an API that let us track the vector's size, and hence
 check the safety of vector accesses at compile time.
@@ -425,7 +425,7 @@ pub fn test_push() -> Vec<i32> {
 
 Flux uses the refinements to type `res` as a 0-sized `Vec<i32>[0]`.
 Each subsequent `push` updates the reference's type
-(as described in @ch:02_ownership:strongly-mutable-references)
+(as described in @ch:03_ownership:strongly-mutable-references)
 by increasing the size by one.
 //
 Finally, the `len` returns the size at that point, `3`, thereby
@@ -519,8 +519,8 @@ fn pop2<T>(vec: &mut Vec<T>) -> (T, T)  {
 == Summary
 
 Previously, we saw how to attach refined specifications for
-functions (in @ch:01_refinements), structs (in @ch:03_structs)
-and enums (in @ch:04_enums).
+functions (in @ch:02_refinements), structs (in @ch:04_structs)
+and enums (in @ch:05_enums).
 //
 In this chapter, we saw that you can use the `extern_spec`
 mechanism to do the same things for objects defined elsewhere,

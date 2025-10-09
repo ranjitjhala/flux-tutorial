@@ -1,6 +1,6 @@
 #import "../orly-modified.typ": alert
 
-= Refining Enums <ch:04_enums>
+= Refining Enums <ch:05_enums>
 
 ```fluxhidden
 #![allow(unused)]
@@ -9,7 +9,7 @@ use flux_rs::attrs::*;
 use flux_rs::assert;
 ```
 
-Previously in @ch:03_structs we saw how to refine structs to constrain the space
+Previously in @ch:04_structs we saw how to refine structs to constrain the space
 of legal values, for example, to define a `Positivei32` or a `Range` `struct` where
 the `start` was less than or equal to the `end`. Next, lets see how the same mechanism
 can be profitably used to let us check properties of `enums` at compile time.
@@ -31,12 +31,12 @@ let us `unwrap` without the anxiety of run-time failure.
 
 // <!-- SLIDE -->
 
-=== A Refined Option <ch:04_enums:refined-option>
+=== A Refined Option <ch:05_enums:refined-option>
 
 To do so, lets define a custom `Option` type
 #footnote[
   Fear not, you can use this method on your existing code using `std::option::Option`!
-  In @ch:07_externs we will learn about _extern specifications_ which will explain how
+  In @ch:08_externs we will learn about _extern specifications_ which will explain how
   to do so.
 ] that is indexed by a `bool` which indicates whether or not the option is
 valid (i.e. `Some` or `None`):
@@ -295,7 +295,7 @@ fn test_safe_divide() -> i32 {
 
 === Smart Constructors Revisited
 
-Recall the `struct Positivei32` from @ch:03_structs:positive-integers
+Recall the `struct Positivei32` from @ch:04_structs:positive-integers
 and the smart constructor we wrote for it.
 
 ```flux
@@ -483,6 +483,6 @@ only `deactivate` when the timer has expired. You can do other fun things, like
 
 - track the #link("https://github.com/flux-rs/flux/blob/main/tests/tests/pos/enums/list00.rs")[length] of a linked list,
 - track the #link("https://github.com/flux-rs/flux/blob/main/tests/tests/pos/enums/list01.rs")[set of elements] in the list, or
-// - determine whether an expression is in normal form (@ch:09_anf), or
-- track the set of permissions that a user is granted (@ch:09_rbac), or
-- ensure the layers of a neural network are composed correctly (@ch:11_neural).
+// - determine whether an expression is in normal form (@ch:10_anf), or
+- track the set of permissions that a user is granted (@ch:10_rbac), or
+- ensure the layers of a neural network are composed correctly (@ch:12_neural).

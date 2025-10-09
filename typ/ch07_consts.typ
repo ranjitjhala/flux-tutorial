@@ -79,7 +79,7 @@ panics at runtime:
 thread 'main' panicked ... index out of bounds: the len is 3 but the index is 3
 ```
 
-== Refined Compile-time Safety <ch:06_consts:refined-compile-time-safety>
+== Refined Compile-time Safety <ch:07_consts:refined-compile-time-safety>
 
 Fortunately, Flux knows about the sizes of arrays and slices. At compile time,
 `flux` warns about two possible errors in `average_color`

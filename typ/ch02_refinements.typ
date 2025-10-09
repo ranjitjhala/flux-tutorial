@@ -1,6 +1,6 @@
 #import "../orly-modified.typ": alert
 
-= Refining Types <ch:01_refinements>
+= Refining Types <ch:02_refinements>
 
 
 Lets begin by seeing how Flux lets you refine basic or primitive
@@ -240,7 +240,7 @@ Further, `res` has type `i32[0 - n]`.
 
 // // <!-- SLIDE -->
 
-== Combining Indexes and Constraints <ch:01_refinements:combining-indexes-and-constraints>
+== Combining Indexes and Constraints <ch:02_refinements:combining-indexes-and-constraints>
 
 Sometimes, we want to _combine_ indexes and constraints in a specification.
 For example, suppose we have some code that manipulates

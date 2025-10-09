@@ -1,6 +1,6 @@
 #import "../orly-modified.typ": alert
 
-= Introduction <ch:00_introduction>
+= Introduction <ch:01_introduction>
 
 Types bring order to code.
 

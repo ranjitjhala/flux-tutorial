@@ -1,6 +1,6 @@
 #import "../orly-modified.typ": alert
 
-= Ownership in Flux <ch:02_ownership>
+= Ownership in Flux <ch:03_ownership>
 
 ```fluxhidden
 #![allow(unused)]
@@ -8,7 +8,7 @@ extern crate flux_rs;
 use flux_rs::attrs::*;
 ```
 
-Previously, in @ch:01_refinements we saw how to refine basic Rust
+Previously, in @ch:02_refinements we saw how to refine basic Rust
 types like `i32` and `bool` with _indices_ and _constraints_ to
 constrain the set of values described by those types.
 //
@@ -88,7 +88,7 @@ finally, the returned type `i32[3]`.
 
 This exclusive ownership mechanism is at work
 in the `factorial` example we signed off with
-previously in @ch:01_refinements.
+previously in @ch:02_refinements.
 
 ```flux
 #[spec(fn (n:i32{0 <= n}) -> i32{v:n <= v})]
@@ -290,7 +290,7 @@ To verify `test_incr`, we need a signature for `incr` that says
 that its _output_ is indeed one greater than its input#footnote[Setting aside
 the issue of overflows for now...].
 
-== Strongly Mutable References <ch:02_ownership:strongly-mutable-references>
+== Strongly Mutable References <ch:03_ownership:strongly-mutable-references>
 
 
 #alert("info", [

@@ -1,6 +1,6 @@
 #import "../orly-modified.typ": alert
 
-= Refining Structs <ch:03_structs>
+= Refining Structs <ch:04_structs>
 
 ```fluxhidden
 #![allow(unused)]
@@ -26,7 +26,7 @@ so we can precisely define the set of _legal_ values of those types.
 
 // <!-- SLIDE -->
 
-== Positive Integers <ch:03_structs:positive-integers>
+== Positive Integers <ch:04_structs:positive-integers>
 
 Lets start with a question posted by
 #link("https://github.com/Connor-GH")[Conner-GH]
@@ -195,7 +195,7 @@ so that the below code verifies. That is, modify the `spec`
 so that it says what the value of `val` is when `new` returns
 a `Positivei32`. You will likely need to _combine_ indexes
 and constraints as shown in the example `add_points` in
-@ch:01_refinements:combining-indexes-and-constraints.
+@ch:02_refinements:combining-indexes-and-constraints.
 ])
 
 ```flux
@@ -289,7 +289,7 @@ constructor for `Range` so that both `new` and
 //
 You will need to _combine_ indexes and constraints
 as shown in the example `add_points` shown
-in @ch:01_refinements:combining-indexes-and-constraints.
+in @ch:02_refinements:combining-indexes-and-constraints.
 ])
 
 ```flux
@@ -375,7 +375,7 @@ impl Positivei32 {
 }
 ```
 
-You can test that `decr` indeed strongly updates (as described in @ch:02_ownership:strongly-mutable-references) the value of its reference
+You can test that `decr` indeed strongly updates (as described in @ch:03_ownership:strongly-mutable-references) the value of its reference
 argument:
 
 ```flux
