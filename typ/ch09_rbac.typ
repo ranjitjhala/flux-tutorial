@@ -1,5 +1,5 @@
 #import "../orly-modified.typ": alert
 
-= Neural Networks <ch:12_neural>
+= Access Control <ch:09_rbac>
 
 #alert("error", [TODO])

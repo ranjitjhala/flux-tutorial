@@ -483,5 +483,6 @@ only `deactivate` when the timer has expired. You can do other fun things, like
 
 - track the #link("https://github.com/flux-rs/flux/blob/main/tests/tests/pos/enums/list00.rs")[length] of a linked list,
 - track the #link("https://github.com/flux-rs/flux/blob/main/tests/tests/pos/enums/list01.rs")[set of elements] in the list, or
-- determine whether an expression is in normal form (@ch:09_anf), or
-- ensure the layers of a neural network are composed correctly (@ch:12_neural).
+// - determine whether an expression is in normal form (@ch:09_anf), or
+- track the set of permissions that a user is granted (@ch:09_rbac), or
+- ensure the layers of a neural network are composed correctly (@ch:11_neural).

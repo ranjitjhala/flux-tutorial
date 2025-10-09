@@ -524,4 +524,4 @@ For example, they let us specify properties of commonly used operations like
 #link("https://github.com/flux-rs/flux/blob/main/lib/flux-core/src/slice/index.rs#L20")[indexing] and #link("https://github.com/flux-rs/flux/blob/main/lib/flux-core/src/iter/traits/iterator.rs#L10-L16")[iteration], and more advanced properties like the semantics of sql queries
 #footnote[See section 6.2 of this #link("https://ranjitjhala.github.io/static/popl25-generic-refinements.pdf")[POPL 2025 paper] for details.]
 and security properties of embedded OS kernels
-#footnote[See this #link("https://ranjitjhala.github.io/static/sosp25-ticktock.pdf")[SOSP 2025 paper] for more details.]
+#footnote[See this #link("https://ranjitjhala.github.io/static/sosp25-ticktock.pdf")[SOSP 2025 paper] for more details.].

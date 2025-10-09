@@ -146,11 +146,11 @@
             let chapter = if ctr0 == 0 {
               ""
             } else {
-              str(ctr0 - 1) + "  "
-              // counter(std.heading).display("1") + " "
+              // 0-based str(ctr0 - 1) + "  "
+              counter(std.heading).display("1") + " "
             };
             set std.text(fill: primary, size: 2em)
-            chapter + it.body
+            chapter +  it.body
             // v(-.64em)
             // line(length: 100%, stroke: 2pt + theme.secondary)
           },
@@ -158,14 +158,17 @@
       } else {
         block({
           set std.text(fill: secondary)
-          if it.numbering != none and level <= 2 {
-            let ctr = counter(std.heading).get()
-            let chapter-num = ctr.at(0) - 1
-            let section-num = ctr.at(1)
-            str(chapter-num) + "." + str(section-num)
-            h(1.8em)
-          }
-          it.body
+          counter(std.heading).display("1.1")
+          // 0-based numbering for chapters
+          // if it.numbering != none /* and level <= 2 */ {
+          //    let ctr = counter(std.heading).get()
+          //    let chapter-num = ctr.at(0);
+          //    let section-num = ctr.at(1);
+          //    // str(chapter-num) + "." + str(section-num)
+          //    // h(0.8em)
+          //    " "
+          // }
+          " " + it.body
         })
       }
     }
@@ -251,7 +254,9 @@
       if it.element.numbering != none {
         if it.level == 1 {
           v(0.85em, weak: true)
-          strong(link(it.element.location(), it))
+          // Display 1-based chapter number in TOC
+          let chapter-num = counter(std.heading).at(it.element.location()).first()
+          strong(link(it.element.location(), str(chapter-num) + " " + it.element.body))
         } else {
           it
         }

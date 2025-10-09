@@ -48,9 +48,10 @@ This is a tutorial about how to write Rust with refinement types.
 
 
 // Set global heading numbering to use arabic numbers
-#set heading(numbering: (..x) => numbering("1.1", ..x.pos().map(n => n - 1)))
+#set heading(numbering: "1.")
 
-// #set heading(numbering: "1.")
+// For 0-based chapter numbering
+// #set heading(numbering: (..x) => numbering("1.1", ..x.pos().map(n => n - 1)))
 
 
 // Reset figure counter for each chapter
@@ -165,7 +166,6 @@ This is a tutorial about how to write Rust with refinement types.
 
 // --------------------------------------------------------
 
-#include("typ/ch09_anf.typ")
+#include("typ/ch09_rbac.typ")
 #include("typ/ch10_scope.typ")
-#include("typ/ch11_sparse.typ")
-#include("typ/ch12_neural.typ")
+#include("typ/ch11_neural.typ")
