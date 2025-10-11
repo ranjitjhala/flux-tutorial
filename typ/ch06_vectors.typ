@@ -487,4 +487,4 @@ the safety of all vector accesses at compile time.
 These mechanisms are _compositional_: we can use standard
 type machinery to build up compound structures and APIs from
 simple ones, as we will see when we use `RVec` to implement
-a small neural network library in @ch:12_neural.
+a small neural network library in @ch:14_neural.

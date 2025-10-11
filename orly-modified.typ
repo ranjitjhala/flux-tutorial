@@ -107,6 +107,10 @@
 
 #let page-init(doc, theme) = (
   body => {
+    // Add indentation to lists
+    show list: set list(indent: 1em)
+    show enum: set enum(indent: 1em)
+
     show std.heading: it => {
       let level = it.at("level", default: it.at("depth", default: 2))
       let scale = (1.16, 1.13, 1.1).at(level - 1, default: 1.0)
@@ -134,13 +138,6 @@
           width: 100%,
           inset: (bottom: .64em),
           {
-            // if it.numbering != none {
-            //   set std.text(fill: secondary)
-            //   [Part ]
-            //   counter(std.heading).display()
-            //   linebreak()
-            // }
-
             let ctr = counter(std.heading).get();
             let ctr0 = ctr.at(0);
             let chapter = if ctr0 == 0 {
@@ -149,7 +146,7 @@
               // 0-based str(ctr0 - 1) + "  "
               counter(std.heading).display("1") + " "
             };
-            set std.text(fill: primary, size: 2em)
+            set std.text(fill: primary, size: 1.8em)
             chapter +  it.body
             // v(-.64em)
             // line(length: 100%, stroke: 2pt + theme.secondary)
