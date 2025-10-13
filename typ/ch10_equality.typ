@@ -116,10 +116,8 @@ However, sometimes we just want an old-fashioned equality test, for instance,
 to make `is_admin` and `is_guest` trivial one-liners instead of all the ceremony
 of a function-call wrapped inside a `match` statement.
 //
-//*Implementing (Partial) Equality*
-//
-I'm pretty sure that despite my telling you not to use `==` above,
-you tried it anyway, or perhaps you anticipated that you _could not_
+Despite my telling you not to use `==` above, I'm pretty certain that
+you tried it anyway. Or perhaps you anticipated that you _could not_
 use it because we have not yet implemented the `PartialEq` trait for
 `Role` which is what Rust uses to implement `==` and `!=` comparisons.
 
@@ -220,7 +218,7 @@ for the `eq` and `ne` methods.
 of _extern specifications_; sadly we cannot quite use those
 because they are for things defined outside the current crate.]
 
-== Detached Specifications <ch:10_rbac:detached>
+== Detached Specifications <ch:10_equality:detached>
 
 Normally, Flux specifications are _attached_ to the function or type or trait
 using a Rust attribute like `#[spec(...)]` or `#[reflect]`.
@@ -263,7 +261,7 @@ fn test_eq_perms() {
 }
 ```
 
-== Refinement Level Functions <ch:10_rbac:access>
+== Refinement Level Functions <ch:10_equality:access>
 
 Now, that we've defined `Role`s and `Permission`s,
 we can define a `User` struct that has their `id`
@@ -361,7 +359,7 @@ fn test_access_bad() {
 }
 ```
 
-== Summary <ch:10_rbac:summary>
+== Summary <ch:10_equality:summary>
 
 To recap, in this chapter we saw how to use
 
