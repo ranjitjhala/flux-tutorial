@@ -626,4 +626,7 @@ fn test_access_ok() {
 
 == Summary
 
-#lorem(30)
+In this chapter, we saw how to build a dynamic access control system,
+by indexing types with _set-valued_ refinements that track users'
+permissions, and strong references which _conditionally_ change
+types when we mutate references.

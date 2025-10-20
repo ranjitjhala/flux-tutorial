@@ -261,7 +261,7 @@ fn test_eq_perms() {
 }
 ```
 
-== Refinement Level Functions <ch:10_equality:access>
+== Refinement Level Functions <ch:10_equality:refinement-level-functions>
 
 Now, that we've defined `Role`s and `Permission`s,
 we can define a `User` struct that has their `id`

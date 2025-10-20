@@ -169,5 +169,5 @@ This is a tutorial about how to write Rust with refinement types.
 #include("typ/ch10_equality.typ")
 #include("typ/ch11_sets.typ")
 #include("typ/ch12_bitvectors.typ")
-#include("typ/ch13_scope.typ")
+#include("typ/ch13_iteration.typ")
 #include("typ/ch14_neural.typ")
