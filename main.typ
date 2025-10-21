@@ -166,10 +166,22 @@ This is a tutorial about how to write Rust with refinement types.
 #include("typ/ch07_consts.typ")
 #include("typ/ch08_externs.typ")
 #include("typ/ch09_traits.typ")
+#include("typ/ch10_iteration.typ")  // TODO
 
 // Part III -------------------------------------------------------
 #include("typ/ch10_equality.typ")
 #include("typ/ch11_sets.typ")
 #include("typ/ch12_bitvectors.typ") // TODO
-#include("typ/ch13_iteration.typ")  // TODO
 #include("typ/ch14_neural.typ")
+
+/*
+TODO
+
+- [ ] ch13_iteration -> ch10_iteration
+- [ ] ch10_equality  -> ch11_equality
+- [ ] ch11_sets      -> ch12_sets
+- [ ] ch12_bitvectors -> ch13_bitvectors
+
+- Split into parts
+
+*/
