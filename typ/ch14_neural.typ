@@ -353,8 +353,105 @@ Flux report errors all over the place. Can you fill them in so the code verifies
 
 == Composing Layers into Networks
 
-- `enum Network`
-- new
+A neural _network_ is the composition of multiple _layers_.
+//
+@fig:neural-network shows a network that maps 3-inputs to 4-outputs,
+with three _hidden_ levels in between which respectively 4, 2, and 3
+neurons.
+//
+Put another way, we might say that the network in the figure composes
+_four_ `Layer`s shown in blue, green, yellow and orange respectively.
+//
+In this case, the `Layer`s match up nicely, with the outputs of each
+precisely matching the inputs of the next layer.
+//
+Next, lets see how Flux can help ensure that we only ever construct
+networks where the layers snap together perfectly.
+
+
+#figure(
+  image("../img/neural-network.png", width: 100%),
+  caption: [A 3-input, 4-output neural network with three hidden levels.]
+) <fig:neural-network>
+
+
+
+The key idea is to think of _building up_
+the network from the right to the left,
+starting with the final output layer,
+and working our way backwards.
+
+- The _last_ #text(fill:orange)[orange] `Layer[3, 4]`
+  corresponds to a `Network` that maps 3 inputs to
+  4 outputs (lets call that a `Network[3, 4]`);
+
+- Next, we add the #text(fill: rgb("#d09c18"))[yellow]
+  `Layer[2, 3]` that composes with the `Network[3, 4]`
+  to give us a `Network[2, 4]`;
+
+- Next, we slap on the #text(fill:rgb("#10932e") )[green] `Layer[4, 2]`
+  which connects with the `Network[2, 3]` to give a `Network[4, 4]`;
+
+- Finally, we top it off with the #text(fill: blue)[blue]
+  `Layer[3, 4]` that connects with the `Network[4, 4]` to
+  give us the final `Network[3, 4]`.
+
+*Refined `Network`s*
+//
+Lets codify the above intuition by defining a recursive `Network`
+that is _refined by_ the number of input and output neurons.
+
+```flux
+enum Network {
+   #[variant((Layer[@i, @o]) -> Network[i, o])]
+   Last(Layer),
+
+   #[variant((Layer[@i, @h], Box<Network[h, @o]>) -> Network[i, o])]
+   Next(Layer, Box<Network>),
+}
+```
+
+Lets consider the two variants of the `Network` enum.
+
+- The `Last` variant takes as input a `Layer[i, o]`
+  to construct a `Network[i, o]`, just like the
+  #text(fill:orange)[orange] `Layer[3, 4]` yields
+  a `Network[3, 4]`;
+
+- The `Next` variant takes as input a `Layer[i, h]`
+  which maps `i` _inputs_ to `h` _hidden_ neurons,
+  and a `Network[h, o]` which maps those `h` hidden
+  neurons to `o` _outputs_, to construct a
+  `Network[i, o]` that maps `i` inputs to `o` outputs!
+
+The network in @fig:neural-network can thus be represented as
+
+```flux
+#[spec(fn() -> Network[3, 4])]
+fn example_network() -> Network {
+  let blue = Layer::new(3, 4);
+  let green = Layer::new(4, 2);
+  let yellow = Layer::new(2, 3);
+  let orange = Layer::new(3, 4);
+  network![blue, green, yellow, orange]
+}
+```
+
+where the `network!` macro recursively applies
+`Next` and `Last` to build the `Network`
+
+```flux
+#[macro_export]
+macro_rules! network {
+    ($last:expr) => {
+        Network::Last($last)
+    };
+    ($first:expr, $($rest:expr),+) => {
+        Network::Next($first, Box::new(network!($($rest),+)))
+    };
+}
+```
+
 
 == Network Propagation
 
