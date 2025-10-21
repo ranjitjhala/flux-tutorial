@@ -438,7 +438,7 @@ fn example_network() -> Network {
 ```
 
 where the `network!` macro recursively applies
-`Next` and `Last` to build the `Network`
+`Next` and `Last` to build the `Network`.
 
 ```flux
 #[macro_export]
@@ -452,8 +452,91 @@ macro_rules! network {
 }
 ```
 
+#alert("success", [
+*EXERCISE:* Complete the specification and implementation
+of a function `Network::new` that takes as input the number
+of `inputs`, a slice of `hiddens`, and the number of `outputs`
+and returns a `Network` that maps the `inputs` to `outputs`
+after passing through the specified hidden layers.
+])
+
+```flux
+impl Network {
+  fn new(inputs: usize, hiddens: &[usize], outputs: usize) -> Network {
+    if hidden_sizes.is_empty() {
+      Network::Last(Layer::new(input_size, output_size))
+    } else {
+      todo!()
+    }
+  }
+}
+```
+
+When done, the following should create a `Network` like that in @fig:neural-network.
+
+```flux
+#[spec(fn() -> Network[3, 4])]
+fn test_network() -> Network {
+  Network::new(3, &[4, 2, 3], 4)
+}
+```
 
 == Network Propagation
 
-- forward
-- backward
+Finally, we must implement the `forward` and `backward` functions
+so that they work over the entire `Network`, thereby allowing us
+to do both training and inference.
+
+#alert("error", [TODO])
+
+```flux
+impl Network {
+  #[spec(fn(&mut Network[@i, @o], &RVec<f64>[i]) -> RVec<f64>[o])]
+  fn forward(&mut self, input: &RVec<f64>) -> RVec<f64> {
+    match self {
+      Network::Last(layer) => {
+        layer.forward(input);
+        layer.outputs.clone()
+      }
+      Network::Next(layer, next) => {
+        layer.forward(input);
+        next.forward(&layer.outputs)
+      }
+    }
+  }
+}
+```
+
+=== Back Propagation
+
+
+#alert("error", [TODO])
+
+Backpropagation algorithm: assumes we have already done a "forwards" pass with the results stored in each `Layer`'s `outputs` field.
+
+```flux
+impl Network {
+#[spec(fn(&mut Self[@i,@o], &RVec<f64>[i], &RVec<f64>[o], _)
+       -> RVec<f64>[i])]
+  fn backward(&mut self, inputs:&RVec<f64>, target:&RVec<f64>, rate:f64)
+   -> RVec<f64>
+  {
+    match self {
+      Network::Last(layer) => {
+        let err = (0..layer.num_outputs)
+                    .map(|i| layer.outputs[i] - target[i])
+                    .collect();
+        layer.backward(inputs, &err, rate)
+      }
+      Network::Next(layer, next) => {
+        let err = next.backward(&layer.outputs, target, rate);
+        layer.backward(inputs, &err, rate)
+      }
+    }
+ }
+}
+```
+
+== Summary
+
+#alert("error", [TODO])
