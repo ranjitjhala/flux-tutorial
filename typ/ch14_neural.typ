@@ -476,32 +476,33 @@ When done, the following should create a `Network` like that in @fig:neural-netw
 
 ```flux
 #[spec(fn() -> Network[3, 4])]
-fn test_network() -> Network {
-  Network::new(3, &[4, 2, 3], 4)
-}
+fn test_network() -> Network { Network::new(3, &[4, 2, 3], 4) }
 ```
 
 == Network Propagation
 
-Finally, we must implement the `forward` and `backward` functions
+Finally, lets implement the `forward` and `backward` functions
 so that they work over the entire `Network`, thereby allowing us
 to do both training and inference.
 
-#alert("error", [TODO])
+=== Forward Evaluation
+
+#alert("success", [
+*EXERCISE:* The `forward` evaluation recurses on
+the `Network`, calling `forward` on each `Layer`
+and passing the outputs to the `next` part of the
+`Network`, returning the output of the `Last` layer.
+Fill in the specification for `forward` so it verifies.
+])
 
 ```flux
-impl Network {
-  #[spec(fn(&mut Network[@i, @o], &RVec<f64>[i]) -> RVec<f64>[o])]
-  fn forward(&mut self, input: &RVec<f64>) -> RVec<f64> {
-    match self {
-      Network::Last(layer) => {
-        layer.forward(input);
-        layer.outputs.clone()
-      }
-      Network::Next(layer, next) => {
-        layer.forward(input);
-        next.forward(&layer.outputs)
-      }
+fn forward(&mut self, input: &RVec<f64>) -> RVec<f64> {
+  match self {
+    Network::Next(layer, next) => {
+      layer.forward(input); next.forward(&layer.outputs)
+    }
+    Network::Last(layer) => {
+      layer.forward(input); layer.outputs.clone()
     }
   }
 }
@@ -509,33 +510,40 @@ impl Network {
 
 === Back Propagation
 
+The _back-propagation_ function assumes we have already done
+a `forward` pass, and have the outputs stored in each
+`Layer`'s `outputs` field.
+//
+It then takes as input the `target` or expected output,
+computes the `err`or at the last layer, and then propagates
+that error backwards through the network, updating the weights
+and biases as it goes using the gradients computed at each layer
+via its `backward` function.
 
-#alert("error", [TODO])
-
-Backpropagation algorithm: assumes we have already done a "forwards" pass with the results stored in each `Layer`'s `outputs` field.
 
 ```flux
-impl Network {
-#[spec(fn(&mut Self[@i,@o], &RVec<f64>[i], &RVec<f64>[o], _)
-       -> RVec<f64>[i])]
-  fn backward(&mut self, inputs:&RVec<f64>, target:&RVec<f64>, rate:f64)
-   -> RVec<f64>
-  {
-    match self {
-      Network::Last(layer) => {
-        let err = (0..layer.num_outputs)
-                    .map(|i| layer.outputs[i] - target[i])
-                    .collect();
-        layer.backward(inputs, &err, rate)
-      }
-      Network::Next(layer, next) => {
-        let err = next.backward(&layer.outputs, target, rate);
-        layer.backward(inputs, &err, rate)
-      }
+fn backward(&mut self, inputs:&RVec<f64>, target:&RVec<f64>, rate:f64)
+   -> RVec<f64> {
+  match self {
+    Network::Last(layer) => {
+      let err = (0..layer.num_outputs)
+                  .map(|i| layer.outputs[i] - target[i])
+                  .collect();
+      layer.backward(inputs, &err, rate)
     }
- }
+    Network::Next(layer, next) => {
+      todo!("exercise: fill this in")
+    }
+  }
 }
 ```
+
+#alert("success", [
+*EXERCISE:* Complete the specification and implementation
+of `backward` above so that it recursively propagates the
+error all the way to the first layer, by calling `backward`
+on each of the intermediate layers.
+])
 
 == Summary
 
