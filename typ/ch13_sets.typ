@@ -1,6 +1,6 @@
 #import "../orly-modified.typ": alert
 
-= Dynamic Access Control <ch:11_sets>
+= Dynamic Access Control <ch:13_sets>
 
 ```fluxhidden
 extern crate flux_core;
@@ -26,7 +26,7 @@ defs!{
 }
 ```
 
-Previously, in @ch:10_equality, we saw how to write a simple
+Previously, in @ch:12_equality, we saw how to write a simple
 role-based access control system, where each `Role` has a
 _fixed_ set of `Permissions` associated with it, and each
 `User` can only access the resources that their `Role`
@@ -48,7 +48,7 @@ Lets begin by recalling the whole business of roles and permissions.
 *Roles* As before, we have three kinds of users: admins, members and guests.
 This time, we will _derive_ `PartialEq` and then use the `flux_core::eq!` macro
 to generate the boilerplate detached specifications needed to compare two `Role`s
-(described in @ch:10_equality:detached).
+(described in @ch:12_equality:detached).
 
 ```flux
 #[reflect]
@@ -296,7 +296,7 @@ As before, each `Role` has a fixed set of `Permissions`
 associated with it.
 //
 However, this time, we will specify these
-as a refinement-level function (see @ch:10_equality:refinement-level-functions)
+as a refinement-level function (see @ch:12_equality:refinement-level-functions)
 that maps each `Role` to the _maximal_ set of `Permissions`
 for that role.
 
@@ -418,7 +418,7 @@ fields to always satisfy some important invariants.
 *Enforcing Invariants*
 
 Lets use the detached specification mechanism --- described
-in @ch:10_equality:detached --- to enforce these invariants
+in @ch:12_equality:detached --- to enforce these invariants
 by _refining_ the struct to track the `role` and `allow` and
 `deny` sets as indices and then specifying the requirements
 above as `#[invariant]`s on the refined struct.
@@ -589,7 +589,7 @@ defs! {
 Finally, we can use the `allow` set to control which `User`s
 are allowed to perform certain actions.
 //
-Unlike in our previous system (@ch:10_equality),
+Unlike in our previous system (@ch:12_equality),
 that used the `User`'s _fixed_ `Role`, we can now
 use the _dynamic_ `allow` set to make this determination.
 

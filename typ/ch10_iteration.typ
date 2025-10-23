@@ -1,6 +1,6 @@
 #import "../orly-modified.typ": alert
 
-= Iteration <ch:10_iteration>
+= Iteration <ch:11_iteration>
 
 ```fluxhidden
  use flux_rs::attrs::*;

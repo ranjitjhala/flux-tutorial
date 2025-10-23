@@ -87,7 +87,7 @@ size `num_inputs`, and that `bias` and `outputs` are
 vectors of length `num_outputs`.
 //
 No matter! We _refine_ the `Layer` struct with a detached
-#footnote[As described in @ch:10_equality:detached]
+#footnote[As described in @ch:12_equality:detached]
 specification that makes these relationships explicit.
 
 ```flux
@@ -547,4 +547,15 @@ on each of the intermediate layers.
 
 == Summary
 
-#alert("error", [TODO])
+To recap, in this chapter, we saw how to build a small neural
+network library from scratch in Rust, using Flux's refinement
+types to track the dimensions of each network `Layer` and to
+ensure that they are composed correctly into a `Network`.
+//
+Note that doing so requires checking a "linking" property:
+that the outputs of one layer match the inputs of the next
+layer, and that this happens for an unbounded number of layers.
+//
+Its rather convenient that one can neatly tuck this invariant
+inside the `enum` definition of `Network`, in a way that the
+type checker can then verify automatically at compile time!
