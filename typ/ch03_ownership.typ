@@ -154,6 +154,10 @@ Notice that the _input_ type has changed. Now, the function
   is automatically computed by Flux during type checking.
 ])
 
+#alert("error",
+[*TODO* Jackie's comment about the `@n` being super mysterious, we need a much better explanation of refinement parameters earlier on: what does the `@` do, why can't w we just write `n`?])
+
+
 === Calling `abs` with a reference
 
 So, for example, Flux can check the below code by automatically
@@ -232,6 +236,9 @@ original contents are in fact _non-zero_
 #alert("success", [
 *EXERCISE:* Can you modify the code for `decr` so that Flux verifies it?
 ])
+
+#alert("error",
+[*TODO* Jackie's comment about making sure we explain why the original code fails, in particular, that the NON-NEGATIVE invariant is checked at the END of the function, and it can FAIL there if `*p` was `0` at the beginning.])
 
 === Aliased References
 
