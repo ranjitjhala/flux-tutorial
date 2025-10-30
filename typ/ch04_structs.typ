@@ -344,7 +344,7 @@ fn max(x:i32, y:i32) -> i32 {
 
 // // <!-- SLIDE -->
 
-== Refinement Functions
+== Refinement Functions <ch:04_structs:refinement-functions>
 
 When code gets more complicated, we like to abstract it into reusable
 functions. Flux lets us do the same for refinements too. For example, we
