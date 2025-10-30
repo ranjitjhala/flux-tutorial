@@ -1,6 +1,6 @@
 #import "../orly-modified.typ": alert
 
-= Bitvectors & Typestates <ch:13_bitvectors>
+= Dependent Typestates <ch:13_bitvectors>
 
 ```fluxhidden
 use std::{
@@ -41,7 +41,7 @@ registers.
 Flux lets us precisely track the results of bitwise
 operations --- just like we can track arithmetic
 operations (@ch:02_refinements) or set operations
-(@ch:13_sets) --- with a special `flux_rs::bitvec::BV32`
+(@ch:12_sets) --- with a special `flux_rs::bitvec::BV32`
 type that represents 32-bit bitvectors as an _opaque_
 (see @ch:06_vectors) newtype wrapper around `u32`
 indexed by a `bitvec<32>` that tracks the bits
@@ -212,7 +212,7 @@ for boolean negation inside refinement expressions.
 //
 Once we have defined the refinement functions, we can
 use them to specify the output types of the corresponding
-Rust functions, using detached specifications (see @ch:12_equality:detached).
+Rust functions, using detached specifications (see @ch:11_equality:detached).
 
 ```flux
 detached_spec! {
@@ -233,7 +233,7 @@ fn test_get_set_pin() {
 }
 ```
 
-== GPIO Ports and Registers
+== GPIO Ports
 
 Lets tuck the newly learned information about bitvectors into our pockets
 and now turn to the issue at hand: developing an API for interacting
@@ -282,7 +282,7 @@ struct Gpio(*mut Registers);
 ```
 
 
-== Tracking Modes via a Private API
+== Tracking Modes
 
 If you are well-caffeinated, you may have noticed that we used the `BV32`
 type for the `modes` register in `Registers` struct above, as it will let
@@ -374,7 +374,7 @@ fn take_peripherals() -> Option<Peripherals> {
 
 
 
-== Using Modes via a Public API
+== Using Modes
 
 Next, lets use the private methods to implement a public API for GPIO
 access that _gets_ and _sets_ a pin's modes, and ensures it is used

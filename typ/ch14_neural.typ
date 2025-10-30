@@ -87,7 +87,7 @@ size `num_inputs`, and that `bias` and `outputs` are
 vectors of length `num_outputs`.
 //
 No matter! We _refine_ the `Layer` struct with a detached
-#footnote[As described in @ch:12_equality:detached]
+#footnote[As described in @ch:11_equality:detached]
 specification that makes these relationships explicit.
 
 ```flux
