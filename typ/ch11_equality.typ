@@ -101,9 +101,11 @@ fn test_role() {
 == Defining Equality <ch:11_equality:equality>
 
 My love and appreciation of pattern-matching should not be questioned.
-However, sometimes we just want an old-fashioned equality test, for instance,
-to make `is_admin` and `is_guest` trivial one-liners instead of all the ceremony
-of a function-call wrapped inside a `match` statement.
+//
+However, sometimes we just want an old-fashioned equality test,
+for instance, to make `is_admin` and `is_guest` trivial one-liners
+instead of all the ceremony of a function-call wrapped inside
+a `match` statement.
 //
 Despite my telling you not to use `==` above, I'm pretty certain that
 you tried it anyway. Or perhaps you anticipated that you _could not_
