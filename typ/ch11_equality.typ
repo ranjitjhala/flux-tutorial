@@ -98,17 +98,6 @@ fn test_role() {
 }
 ```
 
-#alert("info", [
-*Const Promotion:*
-You might wonder why we defined the `let`-bound
-`admin` instead of just directly using `Role::Admin`.
-//
-The reason is that the direct-usage ends up
-using a `rustc` feature called const-promotion
-which Flux currently does not support, but will,
-very soon!
-])
-
 == Defining Equality <ch:11_equality:equality>
 
 My love and appreciation of pattern-matching should not be questioned.

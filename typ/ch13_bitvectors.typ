@@ -146,7 +146,6 @@ and `false` otherwise.
 
 ```flux
 fn get_pin(bv: BV32, pin: Pin) -> bool {
-    let b1 = 1; // const promotion
     ((bv >> pin) & 1) == b1
 }
 ```
@@ -473,18 +472,15 @@ impl Gpio {
 #alert("success", [
 *EXERCISE:* Write the specification for `set_mode` so Flux verifies
 `test_get_set`.
-// is verified by Flux. You may
-// need to define a _refinement function_ similar to `get_mode`.
 ])
 
 ```flux
 #[spec(fn(gpio: &mut Gpio[@modes]) ensures gpio: Gpio[modes])]
 fn test_get_set(gpio: &mut Gpio) {
-    let orig = gpio.get_mode(3);        // save original mode
-    let out = Mode::Output;
-    gpio.set_mode(3, out);              // set to output
-    assert(gpio.get_mode(3) == out);    // const promotion
-    gpio.set_mode(3, orig_mode);        // restore original mode
+    let orig = gpio.get_mode(3);              // save original mode
+    gpio.set_mode(3, Mode::Output);           // set to output
+    assert(gpio.get_mode(3) == Mode::Output); // verify mode
+    gpio.set_mode(3, orig);                   // restore original mode
 }
 ```
 
