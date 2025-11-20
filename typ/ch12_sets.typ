@@ -88,12 +88,13 @@ from a user at runtime. However, we will want to still enforce important
 correctness requirements at compile time, and hence, require a way to
 track the _set of permissions_ a user has at any given point.
 
-*Refined Sets* To do so, we can use a _refined Set_ library
-provided by the `flux-rs` crate, which like the refined-vectors
-(described in @ch:06_vectors) are just a wrapper around Rust's
-standard `HashSet` but where we track the actual _elements_ in the
-set via a _set-valued_ refinement index `elems` whose sort is `Set<T>`,
-where `T` is the type of elements in the set. That is, just like
+*Refined Sets* To do so, we can use a _refined set_ library
+provided by the `flux-rs` crate. Like the refined-vectors
+(described in @ch:06_vectors), the refined-sets will just
+be wrapper around Rust's standard `HashSet` but where we
+track the actual _elements_ in the set via a _set-valued_
+refinement index `elems` whose sort is `Set<T>`, with `T`
+being the sort of elements in the set. That is, just like
 we were tracking the `int`-valued vector _size_ in @ch:06_vectors,
 here we're tracking the `Set<T>`-valued _elems_.
 
@@ -107,22 +108,22 @@ pub struct RSet<T> {
 ```
 
 *Creating Sets*
-The `RSet` API has a method to create an `new` set (which is empty),
+The `RSet` API has a method to create an `new` set which is empty,
+denoted by `#{ }`),
 and a method to add an element to a set, which _updates_ the set
-refinement to include the new `elem` element, using the refinement
-level `set_add` operation.
+refinement to include the new `elem` element, denoted by `s | #{ elem }`
+which is the _union_ of `s` and the singleton set `#{ elem }`.
 
 ```flux
 #[trusted]
 impl<T> RSet<T> {
-  #[spec(fn() -> RSet<T>[set_emp()])]
+  #[spec(fn() -> RSet<T>[#{ }])]
   pub fn new() -> RSet<T> {
-    let inner = std::collections::HashSet::new();
-    RSet { inner }
+    RSet { inner: std::collections::HashSet::new() }
   }
 
   #[spec(fn(self: &mut RSet<T>[@s], elem: T)
-         ensures self: RSet<T>[set_add(elem, s)])]
+         ensures self: RSet<T>[s | #{ elem })])]
   pub fn insert(self: &mut Self, elem: T)
   where
     T: Eq + Hash,
@@ -137,11 +138,9 @@ impl<T> RSet<T> {
 
 ```flux
 impl<T> RSet<T> {
-  #[spec(fn(set: &RSet<T>[@s], &T[@elem]) -> bool[set_is_in(elem, s.elems)])]
+  #[spec(fn(&RSet<T>[@s], &T[@elem]) -> bool[set_is_in(elem, s)])]
   pub fn contains(self: &Self, elem: &T) -> bool
-  where
-    T: Eq + Hash,
-  {
+  where T: Eq + Hash {
     self.inner.contains(elem)
   }
 }
@@ -194,21 +193,17 @@ the `union` and `intersection`, of two sets. We can implement these
 using the corresponding operations on Rust's `HashSet`:
 
 ```flux
-#[trusted]
-impl<T : Eq + Hash + Clone> RSet<T> {
-  #[spec(fn(&RSet<T>[@self], &RSet<T>[@other]) ->
-         RSet<T>[set_intersection(self, other)])]
-  pub fn intersection(&self, other: &RSet<T>) -> RSet<T> {
-    let inner = self.inner.intersection(&other.inner).cloned().collect();
-    RSet { inner }
-  }
-
-  #[spec(fn(&RSet<T>[@self], &RSet<T>[@other]) ->
-            RSet<T>[set_union(self, other)])]
-  pub fn union(&self, other: &RSet<T>) -> RSet<T> {
-    let inner = self.inner.union(&other.inner).cloned().collect();
-    RSet { inner }
-  }
+#[trusted] impl<T : Eq + Hash + Clone> RSet<T> {
+ #[spec(fn(&RSet<T>[@s1], &RSet<T>[@s2]) -> RSet<T>[s1 & s2])]
+ pub fn intersection(&self, other: &RSet<T>) -> RSet<T> {
+   let inner = self.inner.intersection(&other.inner).cloned().collect();
+   RSet { inner }
+ }
+ #[spec(fn(&RSet<T>[@s1], &RSet<T>[@s2]) -> RSet<T>[s1 | s2])]
+ pub fn union(&self, other: &RSet<T>) -> RSet<T> {
+   let inner = self.inner.union(&other.inner).cloned().collect();
+   RSet { inner }
+ }
 }
 ```
 
@@ -246,8 +241,7 @@ are also present in the other.
 ```flux
 #[trusted]
 impl<T: Eq + Hash> RSet<T> {
-  #[spec(fn(&RSet<T>[@self], &RSet<T>[@other]) ->
-         bool[set_subset(self, other)])]
+  #[spec(fn(&RSet<T>[@s1], &RSet<T>[@s2]) -> bool[set_subset(s1, s2)])]
   pub fn subset(&self, other: &RSet<T>) -> bool {
     self.inner.is_subset(&other.inner)
   }
@@ -296,35 +290,32 @@ As before, each `Role` has a fixed set of `Permissions`
 associated with it.
 //
 However, this time, we will specify these
-as a refinement-level function (see @ch:11_equality:refinement-level-functions)
-that maps each `Role` to the _maximal_ set of `Permissions`
-for that role.
+as a refinement-level function `perms`
+(see @ch:11_equality:refinement-level-functions)
+that maps each `Role` to the _maximal_
+set of `Permissions` for that role.
 
 ```flux
 defs! {
-    fn perms(r:Role) -> Set<Permissions> {
-        if r == Role::Admin {
-          set_add(Permissions::Read,
-          set_add(Permissions::Write,
-          set_add(Permissions::Delete,
-          set_add(Permissions::Configure, set_emp()))))
-        } else if r == Role::Member {
-          set_add(Permissions::Read,
-          set_add(Permissions::Write,
-          set_add(Permissions::Comment, set_emp())))
-        } else { // Role::Guest
-          set_add(Permissions::Read, set_emp())
-        }
+  fn perms(r:Role) -> Set<Permissions> {
+    if r == Role::Admin {
+      #{ Read, Write, Delete, Configure }
+    } else if r == Role::Member {
+      #{ Read, Write, Comment }
+    } else { // Role::Guest
+      #{ Read }
     }
 }
 ```
 
-*A Slow Implementation* The above `permissions`
-is a _refinement-level_ function that Flux refinements
-can use to _specify_ access control requirements.
+*A Slow Implementation*
 //
-Fill in the method below that _computes_ the set
-of `permissions` valid for a `Role`.
+Flux refinements can use the refinement-level
+function `perms` to _specify_ access control
+requirements.
+//
+Fill in the Rust method below that _computes_
+the set of `permissions` valid for a `Role`.
 
 ```flux
 impl Role {
@@ -367,15 +358,8 @@ check using pattern-matching and equality comparisons.
 ```flux
 #[spec(fn(&Self[@r], &Permissions[@p]) -> bool[set_is_in(p, perms(r))])]
 pub fn check_permission(&self, p: &Permissions) -> bool {
-  let admin = Role::Admin;                // use this
-  let guest = Role::Guest;                // use this
-  let user = Role::Member;                // use this
   match p {
-    Permissions::Read => true,            // fix this
-    Permissions::Write => true,           // fix this
-    Permissions::Comment => true,         // fix this
-    Permissions::Delete => true,          // fix this
-    Permissions::Configure => true,       // fix this
+    _ => true, // fix this!
   }
 }
 ```
@@ -405,37 +389,34 @@ struct User {
 *Allowed & Denied Permissions* The `allow` and `deny` fields
 respectively track the set of permissions that _have been_ granted
 and _should never be_ granted to the `User`. Of course, we want these
-fields to always satisfy some important invariants.
+fields to be sensible, in that
 
-1. The `allow`ed permissions should always be a _subset_ of the permissions
+1. the `allow`ed permissions should always be a _subset_ of the permissions
    associated with the user's `role`. That is, we can only allow permissions
-   that are valid for the user's role;
+   that are valid for the user's role, and
 
-2. The `allow`ed permissions should never contain any permission that has
-   already been `denied`; that is, the `allow`ed and `deny`ed sets should
-   always be _disjoint_.
+2. the `allow`ed permissions should never contain any permission that has
+   already been `denied`; that is, the intersection of the `allow`ed and
+   `deny`ed sets should always be _empty_.
 
-*Enforcing Invariants*
-
-Lets use the detached specification mechanism --- described
+*Enforcing Invariants* Lets use the detached specification mechanism --- described
 in @ch:11_equality:detached --- to enforce these invariants
 by _refining_ the struct to track the `role` and `allow` and
 `deny` sets as indices and then specifying the requirements
 above as `#[invariant]`s on the refined struct.
 
 ```flux
-#[specs {
+detached_spec! {
  #[refined_by(role:Role, allow:Set<Permissions>, deny:Set<Permissions>)]
  #[invariant(set_subset(allow, perms(role)))]
- #[invariant(set_intersection(allow, deny) == set_emp())]
+ #[invariant((allow & deny) == #{})]
  struct User {
     name: String,
     role: Role[role],
     allowed: RSet<Permissions>[allow],
     denied: RSet<Permissions>[deny],
  }
-}]
-const _: () = ();
+}
 ```
 
 The two `#[invariant]`s correspond directly to our requirements.
@@ -470,7 +451,7 @@ Next, lets write methods to create new `User`s and check their permissions:
 ```flux
 impl User {
   #[spec(fn(name: String, role: Role) ->
-         Self[User{role:role, allow: set_emp(), deny: set_emp()}])]
+         Self[User{role:role, allow: #{}, deny: #{}}])]
   fn new(name: String, role: Role) -> Self {
       Self {
           name,
@@ -522,7 +503,7 @@ defs! {
   }
   fn add(u: User, p: Permissions) -> Set<Permissions> {
     if allowed(u, p) {
-      set_add(p, u.allow)
+      #{p} | u.allow
     } else {
       u.allow
     }
@@ -538,13 +519,11 @@ when we _add_ permissions.
 
 ```flux
 fn test_allow() {
-  let read = Read;
-  let write = Write;
   let mut guest = User::new("guest".to_string(), Role::Guest);
-  assert(guest.allow(&read));           // can allow read
-  assert(guest.allow.contains(&read));  // read is now allowed
-  assert(!guest.allow(&write));         // cannot allow write
-  assert(!guest.allow.contains(&read)); // write is not allowed
+  assert(guest.allow(&Read));           // can allow read
+  assert(guest.allow.contains(&Read));  // read is now allowed
+  assert(!guest.allow(&Write));         // cannot allow write
+  assert(!guest.allow.contains(&Read)); // write is not allowed
 }
 ```
 

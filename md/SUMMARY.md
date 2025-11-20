@@ -7,18 +7,20 @@
 
 # Interactive Tutorial
 
-- [Refinements](tutorial/ch01_refinements.md)
-- [Ownership](tutorial/ch02_ownership.md)
-- [Structs](tutorial/ch03_structs.md)
-- [Enums](tutorial/ch04_enums.md)
-- [Opaques](tutorial/ch05_vectors.md)
-- [Const Generics](tutorial/ch06_consts.md)
-- [Externs](tutorial/ch07_externs.md)
-- [Traits](tutorial/ch08_traits.md)
-- [Case Study: Sparse Matrices]()
-- [Case Study: Neural Networks]()
-- [Case Study: Normal Forms]()
-- [Case Study: Scopes & Interpreters]()
+- [Introduction](tutorial/intro.md)
+- [Refinements](tutorial/ch02_refinements.md)
+- [Ownership](tutorial/ch03_ownership.md)
+- [Structs](tutorial/ch04_structs.md)
+- [Enums](tutorial/ch05_enums.md)
+- [Opaques](tutorial/ch06_vectors.md)
+- [Const Generics](tutorial/ch07_consts.md)
+- [Externs](tutorial/ch08_externs.md)
+- [Traits](tutorial/ch09_traits.md)
+- [Iteration]()
+- [Case Study: Simple Access Control](tutorial/ch11_equality.md)
+- [Case Study: Dynamic Access Control](tutorial/ch12_sets.md)
+- [Case Study: Dependent Typestates](tutorial/ch13_bitvectors.md)
+- [Case Study: Neural Networks](tutorial/ch14_neural.md)
 
 # Appendix
 
